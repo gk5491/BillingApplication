@@ -744,7 +744,7 @@ export default function DeliveryChallanCreate() {
         </CardContent>
       </Card>
 
-      <div className="fixed bottom-0 left-15 right-0 bg-background border-t border-border p-4">
+      <div className="fixed bottom-0 left-78 right-0 bg-background border-t border-border p-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button
@@ -763,9 +763,9 @@ export default function DeliveryChallanCreate() {
               Cancel
             </Button>
           </div>
-          <div className="text-sm text-muted-foreground">
+          {/* <div className="text-sm text-muted-foreground">
             PDF Template: 'Standard Template' <span className="text-primary cursor-pointer">Change</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

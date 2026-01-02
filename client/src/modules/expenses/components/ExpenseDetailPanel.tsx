@@ -88,6 +88,22 @@ export default function ExpenseDetailPanel({
         return taxMap[tax] || 'IGST0 [0%]';
     };
 
+    const handlePrint = async () => {
+        try {
+            const printContent = document.getElementById('expense-print-content');
+            if (!printContent) {
+                console.error('Expense print content not found');
+                return;
+            }
+
+            // Use the unified print utility
+            const { printPDFView } = await import("@/lib/pdf-utils");
+            await printPDFView("expense-print-content", `Expense - ${expense.expenseNumber}`);
+        } catch (error) {
+            console.error("Print error:", error);
+        }
+    };
+
     return (
         <div className="h-full flex flex-col bg-background dark:bg-background">
             <div className="flex items-center justify-between px-6 py-4 border-b">
@@ -107,7 +123,7 @@ export default function ExpenseDetailPanel({
                     <Edit className="h-4 w-4" />
                     Edit
                 </Button>
-                <Button variant="ghost" size="sm" className="gap-2" data-testid="button-print-expense">
+                <Button variant="ghost" size="sm" className="gap-2" onClick={handlePrint} data-testid="button-print-expense">
                     <Printer className="h-4 w-4" />
                     Print
                 </Button>
@@ -195,8 +211,8 @@ export default function ExpenseDetailPanel({
                 <div className="px-6 pb-6">
                     <Tabs defaultValue="journal" className="w-full">
                         <TabsList className="bg-transparent border-b w-full justify-start rounded-none h-auto p-0">
-                            <TabsTrigger 
-                                value="journal" 
+                            <TabsTrigger
+                                value="journal"
                                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
                                 data-testid="tab-journal"
                             >
@@ -249,6 +265,110 @@ export default function ExpenseDetailPanel({
                             </div>
                         </TabsContent>
                     </Tabs>
+                </div>
+            </div>
+
+            {/* Hidden Print Content */}
+            <div
+                id="expense-print-content"
+                className="absolute opacity-0 pointer-events-none"
+                style={{
+                    left: '-200vw',
+                    top: 0,
+                    zIndex: -1,
+                    width: '210mm',
+                    minHeight: '297mm',
+                    backgroundColor: 'white',
+                    padding: '48px',
+                    visibility: 'hidden',
+                    fontFamily: 'Arial, sans-serif',
+                    color: '#000'
+                }}
+            >
+                {/* Print Header */}
+                <div style={{ marginBottom: '32px', borderBottom: '2px solid #e5e7eb', paddingBottom: '16px' }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e40af', margin: '0 0 8px 0' }}>
+                        EXPENSE DETAILS
+                    </h1>
+                    <p style={{ fontSize: '14px', color: '#64748b', margin: '0' }}>
+                        Expense # {expense.expenseNumber}
+                    </p>
+                </div>
+
+                {/* Expense Information */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
+                    <div>
+                        <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#374151' }}>
+                            Expense Information
+                        </h3>
+                        <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                            <p><strong>Date:</strong> {formatDate(expense.date)}</p>
+                            <p><strong>Amount:</strong> {formatCurrency(expense.amount)}</p>
+                            <p><strong>Currency:</strong> {expense.currency}</p>
+                            <p><strong>Expense Account:</strong> {expense.expenseAccount}</p>
+                            <p><strong>Paid Through:</strong> {expense.paidThrough}</p>
+                            <p><strong>Expense Type:</strong> {expense.expenseType}</p>
+                            {expense.invoiceNumber && <p><strong>Invoice #:</strong> {expense.invoiceNumber}</p>}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#374151' }}>
+                            Vendor & Tax Details
+                        </h3>
+                        <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                            <p><strong>Vendor:</strong> {expense.vendorName || 'Not specified'}</p>
+                            <p><strong>GST Treatment:</strong> {expense.gstTreatment}</p>
+                            <p><strong>Source of Supply:</strong> {expense.sourceOfSupply}</p>
+                            <p><strong>Destination of Supply:</strong> {expense.destinationOfSupply}</p>
+                            <p><strong>Tax:</strong> {getTaxLabel(expense.tax)}</p>
+                            <p><strong>Tax Amount:</strong> {formatCurrency(expense.taxAmount || 0)}</p>
+                            {expense.reverseCharge && <p><strong>Reverse Charge:</strong> Yes</p>}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Customer Information */}
+                {expense.customerName && (
+                    <div style={{ marginBottom: '32px' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#374151' }}>
+                            Customer Information
+                        </h3>
+                        <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                            <p><strong>Customer:</strong> {expense.customerName}</p>
+                            <p><strong>Billable:</strong> {expense.isBillable ? 'Yes' : 'No'}</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Notes */}
+                {expense.notes && (
+                    <div style={{ marginBottom: '32px' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#374151' }}>
+                            Notes
+                        </h3>
+                        <div style={{ fontSize: '14px', lineHeight: '1.6', padding: '16px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
+                            {expense.notes}
+                        </div>
+                    </div>
+                )}
+
+                {/* Status */}
+                <div style={{ marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', color: '#374151' }}>
+                        Status Information
+                    </h3>
+                    <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                        <p><strong>Status:</strong> {expense.status}</p>
+                        <p><strong>Created:</strong> {formatDate(expense.createdAt)}</p>
+                        <p><strong>Updated:</strong> {formatDate(expense.updatedAt)}</p>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid #e5e7eb', textAlign: 'center' }}>
+                    <p style={{ fontSize: '12px', color: '#64748b', margin: '0' }}>
+                        Generated on {new Date().toLocaleDateString('en-IN')}
+                    </p>
                 </div>
             </div>
         </div>

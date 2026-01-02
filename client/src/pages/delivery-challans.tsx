@@ -367,43 +367,118 @@ export default function DeliveryChallans() {
     };
 
     const handleGeneratePDF = async () => {
-        if (!selectedChallan) return;
+        if (!selectedChallan) {
+            toast({
+                title: "PDF Error",
+                description: "No delivery challan selected for PDF generation.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const toastResult = toast({
+            title: "Generating PDF...",
+            description: "Please wait while we prepare your document."
+        });
 
         try {
+            // Check if the PDF content element exists
+            const pdfElement = document.getElementById("challan-pdf-content");
+            if (!pdfElement) {
+                throw new Error("PDF content element not found");
+            }
+
+            // Temporarily make the content visible for PDF generation
+            const originalStyle = pdfElement.style.cssText;
+            pdfElement.style.cssText = 'position: absolute; left: 0; top: 0; opacity: 1; z-index: 9999; width: 210mm; background-color: white; padding: 20px;';
+
+            // Wait for content to render properly
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Verify content exists
+            if (!pdfElement.innerHTML.trim()) {
+                throw new Error("PDF content is empty");
+            }
+
             // Import the unified PDF utility
             const { generatePDFFromElement } = await import("@/lib/pdf-utils");
 
             // Generate PDF from the existing PDF view
             await generatePDFFromElement("challan-pdf-content", `${selectedChallan.challanNumber}.pdf`);
 
-            toast({
+            // Restore original styling
+            pdfElement.style.cssText = originalStyle;
+
+            toastResult.update({
+                id: toastResult.id,
                 title: "PDF Downloaded",
                 description: `${selectedChallan.challanNumber}.pdf has been downloaded successfully.`
             });
         } catch (error) {
             console.error("PDF generation error:", error);
-            toast({
+            toastResult.update({
+                id: toastResult.id,
                 title: "Failed to generate PDF",
-                description: "Please try again.",
+                description: "Please try again. " + (error instanceof Error ? error.message : ""),
                 variant: "destructive"
             });
         }
     };
 
-    const handlePrint = () => {
-        if (!selectedChallan) return;
+    const handlePrint = async () => {
+        if (!selectedChallan) {
+            toast({
+                title: "Print Error",
+                description: "No delivery challan selected for printing.",
+                variant: "destructive"
+            });
+            return;
+        }
 
-        // Use the unified print utility
-        import("@/lib/pdf-utils").then(({ printPDFView }) => {
-            printPDFView("challan-pdf-content", `Delivery Challan - ${selectedChallan.challanNumber}`);
-        }).catch(error => {
+        try {
+            // Check if the PDF content element exists and has content
+            const pdfElement = document.getElementById("challan-pdf-content");
+            if (!pdfElement) {
+                toast({
+                    title: "Print Error",
+                    description: "PDF content element not found. Please refresh and try again.",
+                    variant: "destructive"
+                });
+                return;
+            }
+
+            // Temporarily make the hidden content visible for printing
+            const originalStyle = pdfElement.style.cssText;
+            pdfElement.style.cssText = 'position: absolute; left: 0; top: 0; opacity: 1; z-index: 9999; width: 210mm; background-color: white; padding: 20px;';
+
+            // Wait for content to render
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Verify content exists
+            if (!pdfElement.innerHTML.trim()) {
+                pdfElement.style.cssText = originalStyle;
+                toast({
+                    title: "Print Error",
+                    description: "Delivery challan content not ready for printing. Please wait and try again.",
+                    variant: "destructive"
+                });
+                return;
+            }
+
+            // Use the unified print utility
+            const { printPDFView } = await import("@/lib/pdf-utils");
+            await printPDFView("challan-pdf-content", `Delivery Challan - ${selectedChallan.challanNumber}`);
+
+            // Restore original styling
+            pdfElement.style.cssText = originalStyle;
+        } catch (error) {
             console.error("Print error:", error);
             toast({
                 title: "Failed to print",
-                description: "Please try again.",
+                description: "There was an error printing the delivery challan. Please try again.",
                 variant: "destructive"
             });
-        });
+        }
     };
 
     const filteredChallans = challans.filter(challan =>
@@ -430,8 +505,25 @@ export default function DeliveryChallans() {
     return (
         <div className="flex h-[calc(100vh-80px)] animate-in fade-in duration-300 w-full overflow-hidden bg-slate-50">
             {selectedChallan && (
-                <div id="challan-pdf-content" className="fixed" style={{ left: '-9999px', top: 0 }}>
-                    <UnifiedDeliveryChallan challan={selectedChallan} branding={branding} organization={currentOrganization || undefined} />
+                <div
+                    id="challan-pdf-content"
+                    className="absolute opacity-0 pointer-events-none"
+                    style={{
+                        left: '-200vw',
+                        top: 0,
+                        zIndex: -1,
+                        width: '210mm',
+                        minHeight: '297mm',
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        visibility: 'hidden'
+                    }}
+                >
+                    <UnifiedDeliveryChallan
+                        challan={selectedChallan}
+                        branding={branding}
+                        organization={currentOrganization || undefined}
+                    />
                 </div>
             )}
 
@@ -723,7 +815,7 @@ export default function DeliveryChallans() {
                                                     Mark as Open
                                                 </DropdownMenuItem>
                                             )}
-                                            <DropdownMenuItem 
+                                            <DropdownMenuItem
                                                 onClick={() => setLocation(`/e-way-bills?challanId=${selectedChallan.id}`)}
                                                 data-testid="action-eway-bill"
                                             >

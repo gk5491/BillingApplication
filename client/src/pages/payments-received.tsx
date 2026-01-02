@@ -620,7 +620,9 @@ function PaymentCreateForm({
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-red-600">Customer Name*</Label>
+                  <Label className="text-sm font-medium">Customer Name
+                  <span className="text-red-600">*</span>
+                </Label>
                   <Select value={formData.customerId} onValueChange={handleCustomerChange}>
                     <SelectTrigger data-testid="select-customer">
                       <SelectValue placeholder="Select a customer" />
@@ -646,7 +648,9 @@ function PaymentCreateForm({
 
                 {paymentType === 'customer_advance' && (
                   <div className="space-y-2">
-                    <Label className="text-red-600">Place of Supply*</Label>
+                    <Label className="text-sm font-medium">Place of Supply
+                    <span className="text-red-600">*</span>
+                  </Label>
                     <Select value={formData.placeOfSupply} onValueChange={(v) => setFormData(prev => ({ ...prev, placeOfSupply: v }))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select place of supply" />
@@ -675,7 +679,9 @@ function PaymentCreateForm({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-red-600">Amount Received*</Label>
+                  <Label className="text-sm font-medium">Amount Received
+                  <span className="text-red-600">*</span>
+                </Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-3 border border-r-0 border-slate-300 bg-slate-50 rounded-l-md text-sm">
                       INR
@@ -721,7 +727,9 @@ function PaymentCreateForm({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-red-600">Payment Date*</Label>
+                  <Label className="text-sm font-medium">Payment Date
+                  <span className="text-red-600">*</span>
+                </Label>
                   <Input
                     type="date"
                     value={formData.date}
@@ -730,7 +738,9 @@ function PaymentCreateForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-red-600">Payment #*</Label>
+                  <Label className="text-sm font-medium">Payment #
+                  <span className="text-red-600">*</span>
+                </Label>
                   <Input
                     value={formData.paymentNumber}
                     onChange={(e) => setFormData(prev => ({ ...prev, paymentNumber: e.target.value }))}
@@ -757,7 +767,9 @@ function PaymentCreateForm({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-red-600">Deposit To*</Label>
+                  <Label className="text-sm font-medium">Deposit To
+                  <span className="text-red-600">*</span>
+                </Label>
                   <Select value={formData.depositTo} onValueChange={(v) => setFormData(prev => ({ ...prev, depositTo: v }))}>
                     <SelectTrigger data-testid="select-deposit">
                       <SelectValue />
@@ -966,7 +978,7 @@ function PaymentCreateForm({
         </div>
       </ScrollArea>
 
-      <div className="border-t border-slate-200 p-4 bg-white flex items-center justify-end gap-2">
+      <div className="border-t border-slate-200 -mb-2 p-2 bg-white flex items-center justify-end gap-2">
         <Button variant="outline" onClick={onClose} data-testid="button-cancel">Cancel</Button>
         <Button variant="outline" onClick={handleSubmit} data-testid="button-save-draft">Save as Draft</Button>
         <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700" data-testid="button-save-paid">Save as Paid</Button>

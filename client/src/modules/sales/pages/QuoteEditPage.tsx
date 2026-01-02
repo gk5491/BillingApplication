@@ -503,7 +503,10 @@ export default function QuoteEditPage() {
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Customer Name*</Label>
+            <Label className="text-black">Customer Name
+              <span className="text-red-600">*</span>
+            </Label>
+            <span></span>
             <Select value={formData.customerId} onValueChange={handleCustomerChange}>
               <SelectTrigger className="bg-blue-50 border-blue-200" data-testid="select-customer">
                 <SelectValue placeholder="Select or add a customer" />
@@ -526,7 +529,9 @@ export default function QuoteEditPage() {
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Quote#*</Label>
+            <Label className="text-black">Quote#
+              <span className="text-red-600">*</span>
+            </Label>
             <div className="flex gap-2">
               <Input
                 value={formData.quoteNumber}
@@ -548,7 +553,9 @@ export default function QuoteEditPage() {
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Quote Date*</Label>
+            <Label className="text-black">Quote Date
+              <span className="text-red-600">*</span>
+            </Label>
             <Input
               type="date"
               value={formData.quoteDate}

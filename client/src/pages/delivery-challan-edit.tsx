@@ -419,7 +419,9 @@ export default function DeliveryChallanEdit() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-destructive">Customer Name*</Label>
+                <Label className="text-sm font-medium">Customer Name
+                  <span className="text-red-600">*</span>
+                </Label>
                 <Select value={selectedCustomerId} onValueChange={setSelectedCustomerId}>
                   <SelectTrigger className="w-full" data-testid="select-customer">
                     <SelectValue placeholder="Select a customer" />
@@ -459,7 +461,9 @@ export default function DeliveryChallanEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-destructive">Delivery Challan Date*</Label>
+                <Label className="text-sm font-medium">Delivery Challan Date
+                  <span className="text-red-600">*</span>
+                </Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -483,7 +487,9 @@ export default function DeliveryChallanEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-destructive">Challan Type*</Label>
+                <Label className="text-sm font-medium">Challan Type
+                  <span className="text-red-600">*</span>
+                </Label>
                 <Select value={challanType} onValueChange={setChallanType}>
                   <SelectTrigger className="w-full" data-testid="select-challan-type">
                     <SelectValue placeholder="Choose a challan type" />
@@ -681,7 +687,7 @@ export default function DeliveryChallanEdit() {
         </CardContent>
       </Card>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
+      <div className="fixed bottom-0 left-78 right-0 bg-background border-t border-border p-4">
         <div className="max-w-6xl mx-auto flex items-center gap-2">
           <Button
             onClick={() => handleSave()}

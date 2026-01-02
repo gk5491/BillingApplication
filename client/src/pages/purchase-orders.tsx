@@ -356,41 +356,40 @@ function PurchaseOrderDetailPanel({
     }
   };
 
-  const handlePrint = () => {
-    if (!pdfRef.current) return;
-    const printContent = pdfRef.current.innerHTML;
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Print Purchase Order - ${purchaseOrder.purchaseOrderNumber}</title>
-            <style>
-              @media print {
-                body { padding: 0; margin: 0; -webkit-print-color-adjust: exact; }
-                .no-print { display: none; }
-                @page { margin: 10mm; }
-              }
-              body { font-family: serif; padding: 20px; color: #1e293b; }
-              p { margin: 0; }
-              table { width: 100%; border-collapse: collapse; }
-              .pdf-container { width: 100%; }
-            </style>
-          </head>
-          <body>
-            ${printContent}
-            <script>
-              window.onload = () => {
-                setTimeout(() => {
-                  window.print();
-                  window.close();
-                }, 500);
-              };
-            </script>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
+  const handlePrint = async () => {
+    if (!pdfRef.current) {
+      toast({
+        title: "Print Error",
+        description: "Purchase Order content not available for printing.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Ensure PDF view is visible during print
+      const originalShowPdfView = showPdfView;
+      if (!showPdfView) {
+        setShowPdfView(true);
+        // Wait for the view to update
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Use the unified print utility
+      const { printPDFView } = await import("@/lib/pdf-utils");
+      await printPDFView("purchase-order-pdf-content", `Purchase Order - ${purchaseOrder.purchaseOrderNumber}`);
+
+      // Restore original view state
+      if (!originalShowPdfView) {
+        setTimeout(() => setShowPdfView(false), 1000);
+      }
+    } catch (error) {
+      console.error("Print error:", error);
+      toast({
+        title: "Failed to print",
+        description: "There was an error printing the purchase order. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -562,7 +561,9 @@ function PurchaseOrderDetailPanel({
         <div ref={pdfRef} className="w-full">
           {showPdfView ? (
             <div className="w-full">
-              <PurchaseOrderPDFView purchaseOrder={purchaseOrder} branding={branding} />
+              <div id="purchase-order-pdf-content">
+                <PurchaseOrderPDFView purchaseOrder={purchaseOrder} branding={branding} />
+              </div>
             </div>
           ) : (
             <div className="space-y-6 p-4">
@@ -1057,7 +1058,7 @@ export default function PurchaseOrders() {
                       <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-10">
-                            <Checkbox 
+                            <Checkbox
                               checked={selectedPOs.length === paginatedItems.length && paginatedItems.length > 0}
                               onCheckedChange={(checked) => {
                                 if (checked) {
@@ -1066,7 +1067,7 @@ export default function PurchaseOrders() {
                                   setSelectedPOs([]);
                                 }
                               }}
-                              data-testid="checkbox-select-all" 
+                              data-testid="checkbox-select-all"
                             />
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>

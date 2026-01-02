@@ -557,7 +557,46 @@
       ],
       "amountInWords": "Indian Rupee Ten Only",
       "createdAt": "2025-12-30T11:30:16.200Z"
+    },
+    {
+      "id": "pr-1767339160739",
+      "organizationId": "1",
+      "paymentNumber": "",
+      "customerId": "",
+      "customerName": "",
+      "customerEmail": "",
+      "amount": 0,
+      "bankCharges": 0,
+      "tax": "",
+      "date": "2026-01-02",
+      "mode": "Cash",
+      "depositTo": "Petty Cash",
+      "referenceNumber": "",
+      "taxDeducted": "no",
+      "notes": "",
+      "sendThankYou": true,
+      "placeOfSupply": "",
+      "descriptionOfSupply": "",
+      "paymentType": "invoice_payment",
+      "status": "PAID",
+      "unusedAmount": 0,
+      "invoices": [],
+      "attachments": [],
+      "journalEntries": [
+        {
+          "account": "Petty Cash",
+          "debit": 0,
+          "credit": 0
+        },
+        {
+          "account": "Unearned Revenue",
+          "debit": 0,
+          "credit": 0
+        }
+      ],
+      "amountInWords": "Zero",
+      "createdAt": "2026-01-02T07:32:40.739Z"
     }
   ],
-  "nextPaymentNumber": 58
+  "nextPaymentNumber": 59
 }

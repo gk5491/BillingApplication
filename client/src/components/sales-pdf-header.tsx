@@ -111,18 +111,19 @@ export function SalesPDFHeader({
                 {/* Document Title */}
                 <h2
                     style={{
-                        fontSize: '28px',
+                        fontSize: '24px',
                         color: '#1e40af',
-                        margin: '0 0 10px 0',
-                        fontWeight: 'normal',
-                        letterSpacing: '-0.5px',
+                        margin: '0 0 20px 0',
+                        fontWeight: 'bold',
+                        letterSpacing: '0.5px',
+                        lineHeight: '1.2',
                     }}
                 >
                     {documentTitle}
                 </h2>
 
                 {/* Document Number */}
-                <p style={{ fontSize: '13px', fontWeight: '600', margin: '0 0 12px 0', color: '#334155' }}>
+                <p style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 16px 0', color: '#334155', lineHeight: '1.4' }}>
                     # {documentNumber}
                 </p>
 

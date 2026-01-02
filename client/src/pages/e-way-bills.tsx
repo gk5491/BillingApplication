@@ -1318,7 +1318,9 @@ export default function EWayBills() {
                                         <div className="max-w-4xl space-y-6">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label className="text-red-500">Document Type*</Label>
+                                                    <Label className="text-black">Document Type
+                                                        <span className="text-red-600">*</span>
+                                                    </Label>
                                                     <Select
                                                         value={formData.documentType}
                                                         onValueChange={(value) => setFormData({ ...formData, documentType: value })}
@@ -1338,7 +1340,9 @@ export default function EWayBills() {
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <Label className="text-red-500">Transaction Sub Type*</Label>
+                                                    <Label className="text-black">Transaction Sub Type
+                                                        <span className="text-red-600">*</span>
+                                                    </Label>
                                                     <Select
                                                         value={formData.transactionSubType}
                                                         onValueChange={(value) => setFormData({ ...formData, transactionSubType: value })}
@@ -1359,7 +1363,9 @@ export default function EWayBills() {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label className="text-red-500">Customer Name*</Label>
+                                                <Label className="text-black">Customer Name
+                                                <span className="text-red-600">*</span>
+                                                </Label>
                                                 <Select
                                                     value={formData.customerId}
                                                     onValueChange={handleCustomerChange}
@@ -1381,7 +1387,9 @@ export default function EWayBills() {
                                             {formData.documentType === 'credit_notes' && (
                                                 <div className="grid grid-cols-3 gap-4">
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Credit Note#*</Label>
+                                                        <Label className="text-black">Credit Note#
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.documentId}
                                                             onValueChange={handleCreditNoteChange}
@@ -1409,7 +1417,9 @@ export default function EWayBills() {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Transaction Type*</Label>
+                                                        <Label className="text-black">Transaction Type
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.transactionType}
                                                             onValueChange={(value) => setFormData({ ...formData, transactionType: value })}
@@ -1433,7 +1443,9 @@ export default function EWayBills() {
                                             {formData.documentType === 'invoices' && (
                                                 <div className="grid grid-cols-3 gap-4">
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Invoice#*</Label>
+                                                        <Label className="text-black">Invoice#
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.documentId}
                                                             onValueChange={handleInvoiceChange}
@@ -1461,7 +1473,9 @@ export default function EWayBills() {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Transaction Type*</Label>
+                                                        <Label className="text-black">Transaction Type
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.transactionType}
                                                             onValueChange={(value) => setFormData({ ...formData, transactionType: value })}
@@ -1485,7 +1499,9 @@ export default function EWayBills() {
                                             {formData.documentType === 'delivery_challans' && (
                                                 <div className="grid grid-cols-3 gap-4">
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Delivery Challan#*</Label>
+                                                        <Label className="text-black">Delivery Challan#
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.documentId}
                                                             onValueChange={handleDeliveryChallanChange}
@@ -1513,7 +1529,9 @@ export default function EWayBills() {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Transaction Type*</Label>
+                                                        <Label className="text-black">Transaction Type
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.transactionType}
                                                             onValueChange={(value) => setFormData({ ...formData, transactionType: value })}
@@ -1537,7 +1555,9 @@ export default function EWayBills() {
                                             {formData.documentType === 'sales_orders' && (
                                                 <div className="grid grid-cols-3 gap-4">
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Sales Order#*</Label>
+                                                        <Label className="text-black">Sales Order#
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.documentId}
                                                             onValueChange={handleSalesOrderChange}
@@ -1565,7 +1585,9 @@ export default function EWayBills() {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label className="text-red-500">Transaction Type*</Label>
+                                                        <Label className="text-black">Transaction Type
+                                                        <span className="text-red-600">*</span>
+                                                        </Label>
                                                         <Select
                                                             value={formData.transactionType}
                                                             onValueChange={(value) => setFormData({ ...formData, transactionType: value })}
@@ -1627,7 +1649,9 @@ export default function EWayBills() {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label className="text-red-500">Place of Delivery*</Label>
+                                                <Label className="text-black">Place of Delivery
+                                                <span className="text-red-600">*</span>
+                                                </Label>
                                                 <Popover open={placeOfDeliveryOpen} onOpenChange={setPlaceOfDeliveryOpen}>
                                                     <PopoverTrigger asChild>
                                                         <Button
@@ -1785,7 +1809,9 @@ export default function EWayBills() {
                                                 />
 
                                                 <div className="space-y-2">
-                                                    <Label className="text-red-500">Distance (In Km)*</Label>
+                                                    <Label className="text-black">Distance (In Km)
+                                                        <span className="text-red-600">*</span>
+                                                    </Label>
                                                     <div className="flex items-center gap-4">
                                                         <Input
                                                             type="number"

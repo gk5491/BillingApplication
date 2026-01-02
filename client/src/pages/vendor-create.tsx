@@ -494,8 +494,9 @@ export default function VendorCreate() {
               data-testid="input-company-name"
             />
 
-            <Label className="text-sm font-medium text-red-600 pt-2 flex items-center gap-1">
-              Display Name*
+            <Label className="text-sm font-medium text-slate-700 pt-2 flex items-center gap-1">
+              Display Name
+              <span className="text-xs text-red-600">*</span>
               <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
             </Label>
             <Select value={formData.displayName} onValueChange={(v) => handleInputChange('displayName', v)}>
@@ -721,8 +722,10 @@ export default function VendorCreate() {
 
                 {formData.msmeRegistered && (
                   <>
-                    <Label className="text-sm font-medium text-red-600 pt-2 flex items-center gap-1">
-                      MSME/Udyam Registration Type*
+                    <Label className="text-sm font-medium text-slate-700 pt-2 flex items-center gap-1">
+                      MSME/Udyam Registration Type
+                      <span className="text-xs text-red-600">*</span>
+                      <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
                     </Label>
                     <Select 
                       value={formData.msmeRegistrationType} 
@@ -738,10 +741,10 @@ export default function VendorCreate() {
                       </SelectContent>
                     </Select>
 
-                    <Label className="text-sm font-medium text-red-600 pt-2 flex items-center gap-1">
+                    <Label className="text-sm font-medium text-slate-700 pt-2 flex items-center gap-1">
                       MSME/Udyam Registration Number
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
-                      *
+                      <span className="text-xs text-red-600">*</span>
                     </Label>
                     <div>
                       <Input 

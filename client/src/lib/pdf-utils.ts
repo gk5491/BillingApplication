@@ -81,16 +81,38 @@ export async function generatePDFFromElement(
     elementId: string,
     filename: string
 ): Promise<void> {
+    let originalDisplay = '';
+    let originalVisibility = '';
+    let originalOpacity = '';
+    let element: HTMLElement | null = null;
+
     try {
         // Dynamically import libraries
         const html2canvas = (await import('html2canvas')).default;
         const { jsPDF } = await import('jspdf');
 
         // Get the element to convert
-        const element = document.getElementById(elementId);
+        element = document.getElementById(elementId);
         if (!element) {
             throw new Error(`Element with id "${elementId}" not found`);
         }
+
+        // Check if element has content
+        if (!element.innerHTML.trim()) {
+            throw new Error(`Element with id "${elementId}" has no content to generate PDF`);
+        }
+
+        // Store original styles and ensure element is visible for capturing
+        originalDisplay = element.style.display;
+        originalVisibility = element.style.visibility;
+        originalOpacity = element.style.opacity;
+
+        element.style.display = 'block';
+        element.style.visibility = 'visible';
+        element.style.opacity = '1';
+
+        // Wait for any dynamic content to render
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Clone the element to avoid modifying the original
         const clonedElement = element.cloneNode(true) as HTMLElement;
@@ -99,6 +121,9 @@ export async function generatePDFFromElement(
         clonedElement.style.top = '0';
         clonedElement.style.width = '210mm';
         clonedElement.style.backgroundColor = '#ffffff';
+        clonedElement.style.display = 'block';
+        clonedElement.style.visibility = 'visible';
+        clonedElement.style.opacity = '1';
         document.body.appendChild(clonedElement);
 
         // Get all elements in both original and clone to preserve styles
@@ -251,7 +276,20 @@ export async function generatePDFFromElement(
 
         // Save the PDF
         pdf.save(filename);
+
+        // Restore original element styles
+        if (element) {
+            element.style.display = originalDisplay;
+            element.style.visibility = originalVisibility;
+            element.style.opacity = originalOpacity;
+        }
     } catch (error) {
+        // Restore original element styles even if there's an error
+        if (element) {
+            element.style.display = originalDisplay || '';
+            element.style.visibility = originalVisibility || '';
+            element.style.opacity = originalOpacity || '';
+        }
         console.error('PDF generation error:', error);
         throw error;
     }
@@ -264,13 +302,19 @@ export async function printPDFView(elementId: string, title: string): Promise<vo
     const printContent = document.getElementById(elementId);
     if (!printContent) {
         console.error(`Element with id "${elementId}" not found`);
-        return;
+        throw new Error(`Print element not found: ${elementId}`);
     }
 
-    const printWindow = window.open('', '_blank');
+    // Check if element has content
+    if (!printContent.innerHTML.trim()) {
+        console.error(`Element with id "${elementId}" has no content`);
+        throw new Error(`Print element is empty: ${elementId}`);
+    }
+
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (!printWindow) {
-        console.error('Failed to open print window');
-        return;
+        console.error('Failed to open print window - popup blocked?');
+        throw new Error('Failed to open print window. Please allow popups for this site.');
     }
 
     // Get all computed styles and create inline styles
@@ -283,17 +327,35 @@ export async function printPDFView(elementId: string, title: string): Promise<vo
 
             const computed = window.getComputedStyle(el);
 
-            for (let i = 0; i < computed.length; i++) {
-                const prop = computed[i];
-                let value = computed.getPropertyValue(prop);
+            // Essential styles for layout and appearance
+            const importantProps = [
+                'display', 'position', 'width', 'height', 'margin', 'padding',
+                'font-family', 'font-size', 'font-weight', 'color', 'background-color',
+                'border', 'border-width', 'border-style', 'border-color',
+                'text-align', 'line-height', 'vertical-align'
+            ];
 
+            importantProps.forEach(prop => {
+                const value = computed.getPropertyValue(prop);
                 if (value && value !== 'none' && value !== 'auto') {
-                    // Filter out unsupported color formats
                     const safeValue = safeColorValue(value, prop);
                     if (safeValue) {
                         inlineStyle += `${prop}: ${safeValue}; `;
                     }
-                    // If safeValue is null, skip this property
+                }
+            });
+
+            // Copy all other computed styles
+            for (let i = 0; i < computed.length; i++) {
+                const prop = computed[i];
+                if (!importantProps.includes(prop)) {
+                    let value = computed.getPropertyValue(prop);
+                    if (value && value !== 'none' && value !== 'auto') {
+                        const safeValue = safeColorValue(value, prop);
+                        if (safeValue) {
+                            inlineStyle += `${prop}: ${safeValue}; `;
+                        }
+                    }
                 }
             }
 
@@ -306,7 +368,7 @@ export async function printPDFView(elementId: string, title: string): Promise<vo
     const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
     cloneElements.forEach((el, index) => {
-        if (el instanceof HTMLElement) {
+        if (el instanceof HTMLElement && index < allElements.length) {
             const originalEl = allElements[index];
             const inlineStyle = styleMap.get(originalEl);
             if (inlineStyle) {
@@ -316,18 +378,26 @@ export async function printPDFView(elementId: string, title: string): Promise<vo
         }
     });
 
-    printWindow.document.write(`
+    const htmlContent = `
     <!DOCTYPE html>
     <html>
       <head>
         <title>${title}</title>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
+          * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
           body { 
-            font-family: Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #000;
             background: #fff;
+            line-height: 1.4;
           }
           @media print { 
             body { 
@@ -335,21 +405,47 @@ export async function printPDFView(elementId: string, title: string): Promise<vo
               padding: 0;
             }
             @page {
-              margin: 0;
+              margin: 10mm;
+              size: A4;
             }
+          }
+          table {
+            border-collapse: collapse;
+          }
+          img {
+            max-width: 100%;
+            height: auto;
           }
         </style>
       </head>
-      <body>${clone.outerHTML}</body>
+      <body>
+        ${clone.outerHTML}
+      </body>
     </html>
-  `);
+  `;
 
+    printWindow.document.write(htmlContent);
     printWindow.document.close();
 
-    // Wait for content to load then trigger print
+    // Wait for content and images to load then trigger print
     printWindow.onload = () => {
+        // Additional wait for any images or dynamic content
         setTimeout(() => {
-            printWindow.print();
-        }, 250);
+            try {
+                printWindow.print();
+            } catch (printError) {
+                console.error('Print dialog error:', printError);
+                // Fallback: try to focus and print again
+                printWindow.focus();
+                setTimeout(() => printWindow.print(), 100);
+            }
+        }, 500);
     };
+
+    // Fallback if onload doesn't fire
+    setTimeout(() => {
+        if (printWindow.document.readyState === 'complete') {
+            printWindow.print();
+        }
+    }, 1000);
 }

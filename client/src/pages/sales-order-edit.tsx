@@ -502,7 +502,9 @@ export default function SalesOrderEditPage() {
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Customer Name*</Label>
+            <Label className="text-black">Customer Name
+              <span className="text-red-600">*</span>
+            </Label>
             <Select value={formData.customerId} onValueChange={handleCustomerChange}>
               <SelectTrigger className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800" data-testid="select-customer">
                 <SelectValue placeholder="Select or add a customer" />
@@ -544,7 +546,9 @@ export default function SalesOrderEditPage() {
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Sales Order#*</Label>
+            <Label className="text-black">Sales Order#
+              <span className="text-red-600">*</span>
+            </Label>
             <div className="flex gap-2">
               <Input
                 value={formData.salesOrderNumber}
@@ -569,7 +573,9 @@ export default function SalesOrderEditPage() {
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-red-600">Sales Order Date*</Label>
+            <Label className="text-black">Sales Order Date
+              <span className="text-red-600">*</span>
+            </Label>
             <Input
               type="date"
               value={formData.orderDate}

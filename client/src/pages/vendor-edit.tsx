@@ -732,7 +732,9 @@ export default function VendorEdit() {
 
             <TabsContent value="other-details" className="mt-6">
               <div className="grid grid-cols-[200px_1fr] gap-6 items-start">
-                <Label className="text-sm font-medium text-red-600 pt-2">GST Treatment*</Label>
+                <Label className="text-sm font-medium text-black pt-2">GST Treatment
+                  <span className="text-red-600">*</span>
+                </Label>
                 <Select value={formData.gstTreatment} onValueChange={(v) => handleInputChange('gstTreatment', v)}>
                   <SelectTrigger data-testid="select-gst-treatment">
                     <SelectValue placeholder="Select a GST treatment" />
@@ -744,7 +746,9 @@ export default function VendorEdit() {
                   </SelectContent>
                 </Select>
 
-                <Label className="text-sm font-medium text-red-600 pt-2">Source of Supply*</Label>
+                <Label className="text-sm font-medium text-black pt-2">Source of Supply
+                  <span className="text-red-600">*</span>
+                </Label>
                 <Select value={formData.sourceOfSupply} onValueChange={(v) => handleInputChange('sourceOfSupply', v)}>
                   <SelectTrigger data-testid="select-source-of-supply">
                     <SelectValue placeholder="Select" />
@@ -788,8 +792,9 @@ export default function VendorEdit() {
 
                 {formData.msmeRegistered && (
                   <>
-                    <Label className="text-sm font-medium text-red-600 pt-2 flex items-center gap-1">
-                      MSME/Udyam Registration Type*
+                    <Label className="text-sm font-medium text-black pt-2 flex items-center gap-1">
+                      MSME/Udyam Registration Type
+                      <span className="text-red-600">*</span>
                     </Label>
                     <Select 
                       value={formData.msmeRegistrationType} 
@@ -805,10 +810,10 @@ export default function VendorEdit() {
                       </SelectContent>
                     </Select>
 
-                    <Label className="text-sm font-medium text-red-600 pt-2 flex items-center gap-1">
+                    <Label className="text-sm font-medium text-black pt-2 flex items-center gap-1">
                       MSME/Udyam Registration Number
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
-                      *
+                      <span className="text-red-600">*</span>
                     </Label>
                     <div>
                       <Input 
