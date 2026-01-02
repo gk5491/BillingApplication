@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     Popover,
     PopoverContent,
@@ -203,52 +204,56 @@ export function AccountSelectDropdown({
                         <Search className="mr-2 h-4 w-4 shrink-0 text-slate-400" />
                         <CommandInput placeholder="Search accounts..." className="h-9 border-0 focus:ring-0 bg-transparent" />
                     </div>
-                    <CommandList className="max-h-[300px] overflow-y-auto">
+                    <CommandList className="max-h-[300px] overflow-hidden">
                         <CommandEmpty>No account found.</CommandEmpty>
-                        {ACCOUNT_HIERARCHY.map((category) => (
-                            <CommandGroup key={category.category} heading={category.category}>
-                                {category.accounts.map((acc) => (
-                                    <div key={acc.value}>
-                                        <CommandItem
-                                            value={`${acc.label} ${category.category}`}
-                                            onSelect={() => {
-                                                onValueChange(acc.value);
-                                                setOpen(false);
-                                            }}
-                                            className="cursor-pointer"
-                                        >
-                                            <Check
-                                                className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    acc.value === value ? "opacity-100" : "opacity-0"
-                                                )}
-                                            />
-                                            {acc.label}
-                                        </CommandItem>
-                                        {'children' in acc && acc.children && acc.children.map((child: any) => (
-                                            <CommandItem
-                                                key={child.value}
-                                                value={`${child.label} ${category.category}`}
-                                                onSelect={() => {
-                                                    onValueChange(child.value);
-                                                    setOpen(false);
-                                                }}
-                                                className="cursor-pointer pl-8"
-                                            >
-                                                <Check
-                                                    className={cn(
-                                                        "mr-2 h-4 w-4",
-                                                        child.value === value ? "opacity-100" : "opacity-0"
-                                                    )}
-                                                />
-                                                <span className="text-slate-400 mr-1">•</span>
-                                                {child.label}
-                                            </CommandItem>
+                        <ScrollArea className="h-[300px]" onWheel={(e) => e.stopPropagation()}>
+                            <div className="overflow-x-hidden">
+                                {ACCOUNT_HIERARCHY.map((category) => (
+                                    <CommandGroup key={category.category} heading={category.category}>
+                                        {category.accounts.map((acc) => (
+                                            <div key={acc.value}>
+                                                <CommandItem
+                                                    value={`${acc.label} ${category.category}`}
+                                                    onSelect={() => {
+                                                        onValueChange(acc.value);
+                                                        setOpen(false);
+                                                    }}
+                                                    className="cursor-pointer"
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            acc.value === value ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {acc.label}
+                                                </CommandItem>
+                                                {'children' in acc && acc.children && acc.children.map((child: any) => (
+                                                    <CommandItem
+                                                        key={child.value}
+                                                        value={`${child.label} ${category.category}`}
+                                                        onSelect={() => {
+                                                            onValueChange(child.value);
+                                                            setOpen(false);
+                                                        }}
+                                                        className="cursor-pointer pl-8"
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                child.value === value ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        <span className="text-slate-400 mr-1">•</span>
+                                                        {child.label}
+                                                    </CommandItem>
+                                                ))}
+                                            </div>
                                         ))}
-                                    </div>
+                                    </CommandGroup>
                                 ))}
-                            </CommandGroup>
-                        ))}
+                            </div>
+                        </ScrollArea>
                     </CommandList>
                 </Command>
             </PopoverContent>

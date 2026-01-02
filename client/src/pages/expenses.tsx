@@ -1046,26 +1046,28 @@ export default function Expenses() {
                             <Search className="mr-2 h-4 w-4 shrink-0 text-slate-400" />
                             <CommandInput placeholder="Search accounts..." className="h-9 border-0 focus:ring-0 bg-transparent" />
                           </div>
-                          <CommandList className="max-h-[280px] overflow-y-auto overscroll-contain" style={{ scrollBehavior: 'auto' }} onWheel={(e) => e.stopPropagation()}>
+                          <CommandList className="max-h-[280px] overflow-hidden">
                             <CommandEmpty className="py-6 text-center text-sm text-slate-500">No account found.</CommandEmpty>
-                            <CommandGroup>
-                              {PAID_THROUGH_ACCOUNTS.map((account) => (
-                                <CommandItem
-                                  key={account}
-                                  value={account}
-                                  onSelect={() => {
-                                    setExpenseForm(prev => ({ ...prev, paidThrough: account }));
-                                    setPaidThroughOpen(false);
-                                  }}
-                                  className="cursor-pointer hover:bg-blue-50 px-3 py-2.5"
-                                >
-                                  <Check
-                                    className={`mr-2 h-4 w-4 text-blue-600 ${expenseForm.paidThrough === account ? "opacity-100" : "opacity-0"}`}
-                                  />
-                                  <span className="text-slate-700">{account}</span>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
+                            <ScrollArea className="h-[230px]" onWheel={(e) => e.stopPropagation()}>
+                              <CommandGroup>
+                                {PAID_THROUGH_ACCOUNTS.map((account) => (
+                                  <CommandItem
+                                    key={account}
+                                    value={account}
+                                    onSelect={() => {
+                                      setExpenseForm(prev => ({ ...prev, paidThrough: account }));
+                                      setPaidThroughOpen(false);
+                                    }}
+                                    className="cursor-pointer hover:bg-blue-50 px-3 py-2.5"
+                                  >
+                                    <Check
+                                      className={`mr-2 h-4 w-4 text-blue-600 ${expenseForm.paidThrough === account ? "opacity-100" : "opacity-0"}`}
+                                    />
+                                    <span className="text-slate-700">{account}</span>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </ScrollArea>
                             <div className="border-t px-3 py-2 bg-slate-50">
                               <Button
                                 variant="ghost"
@@ -1592,26 +1594,29 @@ export default function Expenses() {
                       <PopoverContent className="w-[400px] p-0" align="start">
                         <Command>
                           <CommandInput placeholder="Search accounts..." />
-                          <CommandList>
-                            <CommandEmpty>No account found.</CommandEmpty>
-                            <CommandGroup>
-                              {PAID_THROUGH_ACCOUNTS.map((account) => (
-                                <CommandItem
-                                  key={account}
-                                  value={account}
-                                  onSelect={() => {
-                                    setMileageForm(prev => ({ ...prev, paidThrough: account }));
-                                    setPaidThroughOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={`mr-2 h-4 w-4 ${mileageForm.paidThrough === account ? "opacity-100" : "opacity-0"
-                                      }`}
-                                  />
-                                  {account}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
+                          <CommandList className="max-h-[280px] overflow-hidden">
+                            <CommandEmpty className="py-6 text-center text-sm text-slate-500">No account found.</CommandEmpty>
+                            <ScrollArea className="h-[230px]" onWheel={(e) => e.stopPropagation()}>
+                              <CommandGroup>
+                                {PAID_THROUGH_ACCOUNTS.map((account) => (
+                                  <CommandItem
+                                    key={account}
+                                    value={account}
+                                    onSelect={() => {
+                                      setMileageForm(prev => ({ ...prev, paidThrough: account }));
+                                      setPaidThroughOpen(false);
+                                    }}
+                                    className="cursor-pointer hover:bg-blue-50 px-3 py-2.5"
+                                  >
+                                    <Check
+                                      className={`mr-2 h-4 w-4 ${mileageForm.paidThrough === account ? "opacity-100" : "opacity-0"
+                                        }`}
+                                    />
+                                    <span className="text-slate-700">{account}</span>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </ScrollArea>
                             <div className="border-t px-2 py-2">
                               <Button
                                 variant="outline"
