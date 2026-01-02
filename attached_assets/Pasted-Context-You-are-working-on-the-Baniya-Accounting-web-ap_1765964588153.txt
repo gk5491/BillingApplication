@@ -1,0 +1,216 @@
+Context
+
+You are working on the Billing Accounting web application (Zoho Books–like UI). Several critical UX and functionality bugs exist inside the Purchases module. These are not cosmetic issues — they break core accounting workflows and must be fixed properly, not patched.
+
+Use the attached screenshots as exact UI and behavior references (Img 2, Img 3, Img 4, Img 5).
+Do not change routes, ports, or business logic, only fix broken navigation, layout, and visibility issues.
+
+1️⃣ Purchases → Expenses → Edit is NOT working (CRITICAL FUNCTIONAL BUG)
+Problem
+
+Clicking Sidebar → Purchases → Expenses → Edit
+
+Either:
+
+Nothing happens, or
+
+Partial page loads, or
+
+Edit screen opens but fields are not populated / not usable
+
+This breaks a core accounting action (editing recorded expenses)
+
+Required Behavior (Reference: Img 2 & Img 3)
+
+Clicking Edit from:
+
+Expense list OR
+
+Expense details right panel
+must open a fully functional Edit Expense screen
+
+The Edit Expense screen must:
+
+Load existing expense data correctly
+
+Allow editing all fields
+
+Save changes successfully and reflect updates in the expense list
+
+Fields That MUST Work
+
+Ensure all fields are editable and bound correctly:
+
+Date
+
+Expense Account
+
+Amount (INR)
+
+Paid Through
+
+Expense Type (Goods / Services)
+
+HSN Code
+
+Vendor
+
+GST Treatment
+
+Source of Supply
+
+Destination of Supply
+
+Reverse Charge checkbox
+
+Tax selection
+
+Tax Inclusive / Exclusive toggle
+
+Invoice #
+
+Notes
+
+Customer Name
+
+Functional Expectations
+
+Edit button must:
+
+Trigger correct route/navigation
+
+Pass correct expense ID
+
+Pre-fill form using backend data
+
+Save / Save & New must:
+
+Persist updated values
+
+Redirect back correctly
+
+Show updated data in list & detail view
+
+❌ Do NOT leave placeholders like “Edit functionality coming soon”
+❌ Do NOT reload blank forms
+✅ This must behave like a real accounting system, not a mock UI
+
+2️⃣ Purchases → Purchase Orders → Right-side Blank Space (LAYOUT BUG)
+Problem (Reference: Img 4)
+
+On Purchases → Purchase Orders
+
+There is a large unused blank space / margin / padding on the right side
+
+This wastes screen real estate and makes the UI look broken and unprofessional
+
+Required Fix
+
+Remove unnecessary:
+
+Right margin
+
+Padding
+
+Empty containers
+
+Grid columns reserving unused space
+
+The Purchase Order list and details should:
+
+Expand naturally to available width
+
+Align consistently with sidebar and header
+
+Not leave dead UI areas
+
+Constraints
+
+Do NOT change:
+
+Sidebar width
+
+Page structure
+
+Routing logic
+
+Only fix layout spacing issues using proper container sizing and overflow handling
+
+Expected Result
+
+Clean, balanced layout
+
+No empty white blocks on the right
+
+Purchase Order content uses full available width
+
+3️⃣ Purchase Orders → New & Edit → Item Table Not Displaying Properly (HIGH IMPACT UI BUG)
+Problem (Reference: Img 5)
+
+In New Purchase Order and Edit Purchase Order screens:
+
+Item Table is:
+
+Cropped
+
+Misaligned
+
+Partially hidden
+
+Columns overflow or collapse
+
+This makes it impossible to properly add/edit items
+
+Item Table Sections That MUST Be Fully Visible
+
+Ensure proper layout and visibility for:
+
+Item Details
+
+Account
+
+Quantity
+
+Rate
+
+Tax
+
+Amount
+
+Bulk Actions
+
+Delete / Action icons
+
+Required Fixes
+
+Ensure:
+
+Table container has proper width handling
+
+Horizontal scrolling works if needed
+
+Columns do not overflow or overlap
+
+No field goes outside its defined boundary
+
+Fix responsiveness so the table:
+
+Works on standard desktop resolutions
+
+Doesn’t break alignment when resizing
+
+Structural Expectations
+
+Item table must look and behave like a production-grade accounting UI
+
+All rows, headers, and input fields must:
+
+Stay inside the container
+
+Be clickable and editable
+
+Update amounts dynamically
+
+❌ Do NOT hide columns
+❌ Do NOT shrink text to unreadable sizes
+✅ Make layout robust instead of hacky

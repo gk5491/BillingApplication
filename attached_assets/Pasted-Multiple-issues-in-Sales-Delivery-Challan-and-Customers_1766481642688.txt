@@ -1,0 +1,87 @@
+Multiple issues in Sales, Delivery Challan, and Customers modules.
+
+1) Sales Order → Invoice History & Zero Values Issue
+
+Modules:
+- Sales Order
+- Invoice (created from Sales Order)
+
+Steps:
+- Open any Sales Order
+- Convert to Invoice → Convert to all invoices
+- Invoice is created and visible in the Invoices section (sidebar)
+
+Issues:
+- Created invoices are not visible in the Sales Order → Invoice history.
+- In the generated invoice, the following values are shown as 0:
+  - Sub Total: ₹0.00
+  - Total: ₹0.00
+  - Balance Due: ₹0.00
+
+Expected:
+- Invoice history should be visible under the Sales Order.
+- Sub Total, Total, and Balance Due should be calculated correctly.
+
+Actual:
+- Invoice history missing.
+- Monetary values shown as zero.
+
+Impact:
+- Broken traceability between Sales Order and Invoice
+- Financial mismatch
+
+
+2) Issues in Delivery Challan
+
+Modules:
+- New Delivery Challan
+- Edit Delivery Challan
+
+Issues:
+a) Item pricing issue  
+- Item rate is fetched incorrectly.
+
+Example:
+Item: HP ProDesk Desktop  
+Item Master Price: ₹45,000.00  
+Rate shown: ₹45.00  
+
+Expected:
+- Rate should be fetched exactly from Item Master.
+
+Actual:
+- Rate is reduced to ₹45.00.
+
+b) Edit Delivery Challan – Item selection issue  
+- Items are not selectable or fetched in Edit Delivery Challan.
+- Item dropdown does not load correctly.
+
+Expected:
+- Items should be selectable and fetched properly in Edit Delivery Challan.
+
+Actual:
+- Item list does not populate.
+
+
+3) Customers List – Columns Issue
+
+Module:
+- Customers
+
+Issues:
+- "Unused Credits (BCY)" column should be removed from the Customers list.
+- "Receivables (BCY)" column is always showing ₹0.00 even when transactions exist.
+
+Expected:
+- Unused Credits (BCY) column should be removed.
+- Receivables (BCY) should display correct outstanding amounts per customer.
+
+Actual:
+- Unused Credits column is visible unnecessarily.
+- Receivables column always shows ₹0.00.
+
+Impact:
+- Incorrect customer financial summary
+- Misleading receivables data
+
+Please resolve the above issues across Sales Order → Invoice flow, Delivery Challan item handling, and Customers list column data.

@@ -1,0 +1,99 @@
+DETAILED DEVELOPMENT PROMPT – SALES → ITEM MODULE FEATURES
+1️⃣ Feature – Sales → Items → List Page Filtering
+Objective: Add filter functionality on the All Items screen.
+Requirements:
+Add filter dropdown with the following three filter options:
+All Items
+Active Items
+Inactive Items
+When user selects an option:
+System must fetch & refresh item list accordingly.
+Default selection = All Items.
+Backend expectations:
+GET /api/sales/items?status=all GET /api/sales/items?status=activeGET /api/sales/items?status=inactive
+UI Logic:
+Dropdown selection triggers list reload.
+Highlight currently selected filter.
+If list empty → show “No items found”.
+Reference: (Functionality similar to image 1 layout and flow)
+2️⃣ Feature – Unit Configuration In Sales Items (New/Edit Item → Unit Dropdown + Config Drawer)
+Requirements:
+Unit selection dropdown must display a scrollable list of existing units.
+
+(Example values: kg, g, m, pcs, ft, lb, box, ml, etc.)
+The list must come from backend API.
+Backend expectation:
+GET /api/units
+POST /api/units/create
+UI Functionality:
+User can pick unit from dropdown.
+A “Configure Units” button must appear at bottom (like image 2).
+Clicking “Configure Units” opens new modal/drawer:
+List of existing units (editable UQC codes like image 3).
+Add new unit feature:
+Validate duplicate unit name
+Require both: Unit Name + UQC code
+Validation rules:
+Unit cannot be empty
+UQC must be unique
+Unit must auto update item form after save
+3️⃣ Feature – Account Dropdown (Sales Information + Purchase Information Sections)
+Requirement:
+Account dropdown must provide the following list:
+Other Current Asset   - Advance Tax  - Employee Advance  - Input Tax Credits      • Input CGST
+      • Input IGST
+      • Input SGST
+  - Prepaid Expenses
+  - Reverse Charge Tax Input but not due
+  - TDS ReceivableFixed Asset  - Furniture and Equipment
+Other Current Liability  - Employee Reimbursements  - GST Payable      • Output CGST
+      • Output IGST
+      • Output SGST
+  - Opening Balance Adjustments
+  - Tax Payable
+  - TDS Payable
+  - Unearned RevenueIncome  - Discount  - General Income  - Interest Income  - Late Fee Income  - Other Charges  - Sales  - Shipping Charge
+UI Functionality:
+Must support hierarchical indentation grouping
+Must contain a search bar
+Search should filter through the whole list
+Dropdown should scroll if long list
+Auto-fill Account codes after selection
+4️⃣ Feature – Default Tax Rate Selections
+Location: Sales → New/Edit Item → Default Tax Rates
+Requirements:
+Two dropdowns
+Intra State Tax
+Inter State Tax
+Dropdown must show GST values like:
+GST0 [0%]GST12 [12%]GST18 [18%]GST28 [28%]GST5 [5%] 
+Default must populate based on previous item tax profile.
+Must allow search inside list like in image 4.
+Backend expectations:
+GET /api/taxRates
+General UI/UX Standard Rules
+All dropdowns must support:
+Keyboard navigation
+Type-to-search
+Mouse scroll
+Smooth loading states
+Error handling:
+Show validation error messages inline
+Show toast for API failures
+All actions must be logged and auditable.
+Acceptance Testing Conditions
+A feature must be considered complete only if:
+Filtering:
+Active view hides inactive items.
+Inactive view hides active ones.
+All view shows both categories.
+Units:
+New unit saved → instantly appears in dropdown.
+Unit list scrolls correctly.
+UQC mapping works without breaking existing units.
+Accounts:
+Search returns results instantly.
+Account categories render in correct hierarchy.
+Tax:
+Both tax types selectable and persist on save.
+ 

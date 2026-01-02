@@ -1,0 +1,139 @@
+In Sales → Payments Received, when clicking New / Record Payment, the form currently opens inside a modal/dialog overlay.
+
+Because it is rendered inside a modal:
+
+Margins are applied on all sides
+
+Max-width restrictions exist
+
+Background is dimmed
+
+The page never occupies full available space
+
+Even after layout changes, the issue persists because the modal container itself is still present.
+
+Current Incorrect Behavior
+
+Record Payment opens as a popup modal
+
+Left, right, top, and bottom spacing exists
+
+Page does not stretch edge-to-edge
+
+Background list remains dimmed
+
+UX is inconsistent with other create pages
+
+This behavior is wrong and unacceptable.
+
+Expected Correct Behavior
+
+When New / Record Payment is opened:
+
+❌ No modal
+
+❌ No dialog wrapper
+
+❌ No backdrop / overlay
+
+❌ No max-width or forced margins
+
+✅ Sidebar remains visible
+
+✅ Page content starts immediately after sidebar
+
+✅ Form occupies 100% of available width and height
+
+✅ Layout matches Create Invoice / Create Credit Note pages
+
+Final layout must be:
+
+| Sidebar | Record Payment – Full Page Form |
+
+Mandatory Implementation Requirements
+
+Completely remove modal/dialog usage
+
+Do not reuse modal component
+
+Do not hide modal with CSS
+
+Do not keep modal wrapper in DOM
+
+Use route-based page rendering
+
+Example route: /payments-received/new
+
+Render Record Payment as a normal page, not a popup
+
+Use the same base layout wrapper as:
+
+Create Invoice
+
+Create Credit Note
+
+Create Sales Order
+
+Layout rules
+
+Width: 100%
+
+Height: full viewport
+
+No max-width
+
+No outer margins from left/right/top/bottom
+
+Only standard page padding (same as other create pages)
+
+Form behavior
+
+Reuse existing form fields and logic
+
+Invoice Payment & Customer Advance must work in the same page
+
+Only the container/layout changes
+
+What Must NOT Be Done (Critical)
+
+❌ Do NOT adjust modal padding
+
+❌ Do NOT increase modal width
+
+❌ Do NOT remove backdrop only
+
+❌ Do NOT rely on CSS hacks
+
+❌ Do NOT keep modal structure in any form
+
+If a modal exists, the fix is incorrect.
+
+Acceptance Criteria
+
+Record Payment opens as a full-page screen
+
+No margins on any side
+
+No overlay or dimmed background
+
+Sidebar remains visible
+
+UI and spacing identical to Create Invoice
+
+Covers entire available content area
+
+Reference
+
+Use Create Invoice page as the exact layout reference for:
+
+Width
+
+Height
+
+Spacing
+
+Page behavior
+
+Do not use the current Record Payment screen as reference.
+
+Final Note

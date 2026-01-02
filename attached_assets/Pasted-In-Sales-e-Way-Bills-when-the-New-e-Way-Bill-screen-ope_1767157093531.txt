@@ -1,0 +1,101 @@
+In Sales → e-Way Bills, when the “New e-Way Bill” screen opens, the e-Way Bills list/table remains visible on the left, creating an unwanted middle section between the sidebar and the New e-Way Bill form.
+
+This is incorrect behavior.
+
+The list view must NOT be visible when creating a new e-Way Bill.
+
+Current (Incorrect) Behavior
+
+Sidebar is visible ✅
+
+e-Way Bills list/table is still visible ❌
+
+New e-Way Bill form opens on the right ❌
+
+Result:
+Sidebar | e-Way Bills List (UNWANTED) | New e-Way Bill Form
+
+This creates confusion and wasted space.
+
+Expected (Correct) Behavior
+
+When New e-Way Bill is opened:
+
+✅ Sidebar remains visible
+❌ e-Way Bills list/table is completely hidden
+✅ New e-Way Bill form should start immediately after the sidebar
+✅ The New e-Way Bill form should occupy the full remaining width
+
+Correct layout should be:
+
+Sidebar | New e-Way Bill Form (FULL WIDTH)
+
+Implementation Requirements (IMPORTANT)
+
+When New e-Way Bill mode is active:
+
+Do NOT render the e-Way Bills list/table component
+
+OR conditionally hide it using state/route-based rendering
+
+Ensure this logic applies only during:
+
+Create New e-Way Bill
+
+Edit e-Way Bill (if applicable)
+
+When New e-Way Bill is closed:
+
+Restore the list/table view normally
+
+Technical Hints (Don’t Ignore This)
+
+This is a conditional rendering / routing issue, not CSS alone
+
+Likely causes:
+
+List and form both rendered inside the same parent layout
+
+Missing condition like:
+
+isCreateMode
+
+route check (/eway-bills/new)
+
+Fix should be at:
+
+Page-level layout
+
+Route-level component switch
+
+NOT with hacks like display:none unless unavoidable
+
+Acceptance Criteria
+
+No list/table visible when New e-Way Bill is open
+
+No empty or “middle” section
+
+Clean, professional, single-focus UI
+
+Same behavior should apply consistently across:
+
+Items → New Item
+
+Credit Notes → Create
+
+Any create/edit right-panel screens
+
+Important Note (Read Carefully)
+
+If someone tries to fix this using only:
+
+margin
+
+padding
+
+width
+
+👉 they are fixing the symptom, not the cause.
+
+The cause is incorrect layout composition.

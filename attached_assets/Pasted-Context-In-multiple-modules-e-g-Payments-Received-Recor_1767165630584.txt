@@ -1,0 +1,137 @@
+Context
+
+In multiple modules (e.g. Payments Received → Record Payment, Expenses → Record Expense / Record Mileage), the create forms open inside modal dialogs.
+
+These modals apply:
+
+Margins from all sides
+
+Max-width constraints
+
+Background overlays
+
+Internal scroll containers
+
+As a result, the pages do not utilize full screen space and look inconsistent with other create pages like Create Invoice.
+
+Modules Affected (Not Limited To)
+
+Sales → Payments Received → Record Payment
+
+Purchases → Expenses → Record Expense
+
+Purchases → Expenses → Record Mileage
+
+Any other primary “New / Create” flows currently using modals
+
+Current Incorrect Behavior
+
+Create forms open in modal/popups
+
+Margins exist on all sides
+
+Page never covers full width/height
+
+Sidebar is visually disconnected
+
+UX is inconsistent across the application
+
+This behavior is wrong for primary business workflows.
+
+Expected Correct Behavior
+
+For all primary create flows:
+
+❌ No modal/dialog
+
+❌ No overlay or backdrop
+
+❌ No max-width restrictions
+
+❌ No forced margins from any side
+
+✅ Sidebar remains visible
+
+✅ Content starts immediately after sidebar
+
+✅ Form occupies 100% of available width & height
+
+✅ Layout matches full-page create screens (e.g. Create Invoice)
+
+Correct layout pattern:
+
+| Sidebar | Full-Page Create Form |
+
+Mandatory Implementation Requirements
+
+Completely remove modal/dialog usage
+
+Do not reuse modal components
+
+Do not hide modal using CSS
+
+Modal wrapper must not exist in DOM
+
+Use route-based or page-level rendering
+
+Examples:
+
+/payments-received/new
+
+/expenses/new
+
+/expenses/mileage/new
+
+Use a shared full-page layout container
+
+Same layout used by:
+
+Create Invoice
+
+Create Credit Note
+
+Create Sales Order
+
+Layout rules
+
+Width: 100%
+
+Height: full viewport
+
+No max-width
+
+No outer margin/padding (except standard page padding)
+
+No overlay or dim background
+
+Business logic
+
+Reuse existing form fields and validations
+
+Only change how the form is rendered, not its logic
+
+What MUST NOT Be Done
+
+❌ Do NOT increase modal width
+
+❌ Do NOT reduce modal padding
+
+❌ Do NOT remove backdrop only
+
+❌ Do NOT apply CSS hacks on modal
+
+❌ Do NOT keep modal structure hidden
+
+If a modal exists, the fix is invalid.
+
+Acceptance Criteria
+
+All primary create forms open as full pages
+
+No margin from any side
+
+Sidebar always visible
+
+UI consistent across all modules
+
+No modal or overlay anywhere for create flows

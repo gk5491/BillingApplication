@@ -1,0 +1,180 @@
+1️⃣ Overall Structure Alignment
+
+Ensure that the Edit Item modal:
+
+Uses the same component layout structure as New Item.
+
+Matches spacing, margin, padding, and positioning.
+
+Labels, font sizes, styles → must be identical.
+
+Button placement, alignment → must match (Save/Cancel bottom row).
+
+If any custom CSS exists in Edit Item → remove/upgrade to shared styles.
+
+2️⃣ Default Tax Rate Section (Top Section)
+
+On Edit Item:
+
+Show the Intra State & Inter State tax selectors on the top section, exactly like New Item.
+
+Match dropdown:
+
+search support
+
+same width
+
+same border
+
+same font size
+
+Values must preload from item record.
+
+If no data exists → show placeholder text.
+
+3️⃣ Sales Information Section — Same Layout
+
+Match New Item:
+
+Selling Price textbox must be identical.
+
+Currency badge (INR) must appear exactly same size & style.
+
+“Sellable” toggle must display same logic/position.
+
+Account dropdown must match New Item account component.
+
+Description textarea must match height/width & label position.
+
+4️⃣ Purchase Information Section — Same Layout
+
+Match New Item:
+
+Cost price box styling same.
+
+Currency badge same.
+
+Purchasable toggle same style/placement.
+
+Account dropdown same implementation.
+
+Description textarea styling identical.
+
+Preferred vendor dropdown alignment identical.
+
+5️⃣ Button Alignment & Styling
+
+Bottom buttons must match New Item:
+
+Save: blue button right aligned
+
+Cancel: ghost button, left of save
+
+Ensure same:
+
+hover state
+
+disabled state
+
+border radius
+
+shadow & transition
+
+6️⃣ Field Validation & Error Highlighting
+
+Match New Item validation behaviour:
+
+Red * marks on required fields
+
+On submit errors → red border + red text label
+
+Tooltip or inline error identical
+
+Disable Save button if mandatory fields are blank:
+
+item name
+
+selling price
+
+account
+
+tax preferences
+
+7️⃣ Component Behaviour Matching
+Edit Item page must:
+
+use same dropdown components
+
+use same currency component
+
+use same input styling
+
+use same font weight
+
+use same modal container
+
+No component duplication → reuse New Item components.
+
+8️⃣ Preloading Logic
+
+On Edit:
+
+Auto-fill all fields
+
+toggles reflect current state
+
+selected taxes pre-filled
+
+vendor pre-loaded
+
+Only behaviour difference from New Item:
+
+New Item fields start empty
+
+Edit Item fields start populated
+
+Everything else identical.
+
+9️⃣ Scroll & Modal Behaviour
+
+Match New Item scrolling:
+
+Full height modal scroll
+
+Header fixed
+
+Content scrollable
+
+10️⃣ Interaction Rules
+
+Match New Item:
+
+When sellable unchecked → hide sales input section
+
+When purchasable unchecked → hide purchase input section
+
+No feature differences allowed.
+
+11️⃣ Code Instructions for Dev
+
+Apply shared layout & form component wrappers
+
+Refactor Edit Item page to use New Item form component
+
+NO custom CSS hacks allowed
+
+Mobile responsiveness must be synced
+
+12️⃣ Testing Acceptance Criteria
+Edit Item must:
+
+✔ visually match New Item
+✔ field ordering exactly same
+✔ label placements identical
+✔ dropdown style same
+✔ button style same
+✔ validation same
+✔ error highlights same
+✔ layout same
+
+If users switch between New Item → Edit Item, they should not feel they are on different UI layers.

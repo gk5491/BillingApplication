@@ -1,0 +1,113 @@
+vendor-credits.tsx:614 Download error: Error: Attempting to parse an unsupported color function "oklab"
+    at Object.parse (html2canvas.js?v=01c183cf:1673:15)
+    at parse (html2canvas.js?v=01c183cf:3706:26)
+    at new CSSParsedDeclaration2 (html2canvas.js?v=01c183cf:3552:30)
+    at new ElementContainer2 (html2canvas.js?v=01c183cf:3756:21)
+    at createContainer (html2canvas.js?v=01c183cf:4643:10)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4593:25)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4608:13)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4608:13)
+    at parseTree (html2canvas.js?v=01c183cf:4648:3)
+    at html2canvas.js?v=01c183cf:7753:18
+handleDownloadPDF @ vendor-credits.tsx:614
+await in handleDownloadPDF
+handleEvent @ @radix-ui_react-dropdown-menu.js?v=01c183cf:157
+executeDispatch @ react-dom_client.js?v=01c183cf:13622
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+processDispatchQueue @ react-dom_client.js?v=01c183cf:13658
+(anonymous) @ react-dom_client.js?v=01c183cf:14071
+batchedUpdates$1 @ react-dom_client.js?v=01c183cf:2626
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=01c183cf:13763
+dispatchEvent @ react-dom_client.js?v=01c183cf:16784
+dispatchDiscreteEvent @ react-dom_client.js?v=01c183cf:16765
+<div>
+exports.jsx @ chunk-T7ATK2ZT.js?v=01c183cf:247
+Primitive.div @ chunk-VC37KAJD.js?v=01c183cf:144
+react_stack_bottom_frame @ react-dom_client.js?v=01c183cf:18509
+renderWithHooks @ react-dom_client.js?v=01c183cf:5654
+updateForwardRef @ react-dom_client.js?v=01c183cf:7198
+beginWork @ react-dom_client.js?v=01c183cf:8735
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+performUnitOfWork @ react-dom_client.js?v=01c183cf:12561
+workLoopSync @ react-dom_client.js?v=01c183cf:12424
+renderRootSync @ react-dom_client.js?v=01c183cf:12408
+performWorkOnRoot @ react-dom_client.js?v=01c183cf:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=01c183cf:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=01c183cf:13414
+processRootScheduleInMicrotask @ react-dom_client.js?v=01c183cf:13437
+(anonymous) @ react-dom_client.js?v=01c183cf:13531
+<Primitive.div>
+exports.jsx @ chunk-T7ATK2ZT.js?v=01c183cf:247
+(anonymous) @ @radix-ui_react-dropdown-menu.js?v=01c183cf:669
+react_stack_bottom_frame @ react-dom_client.js?v=01c183cf:18509
+renderWithHooks @ react-dom_client.js?v=01c183cf:5654
+updateForwardRef @ react-dom_client.js?v=01c183cf:7198
+beginWork @ react-dom_client.js?v=01c183cf:8735
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+performUnitOfWork @ react-dom_client.js?v=01c183cf:12561
+workLoopSync @ react-dom_client.js?v=01c183cf:12424
+renderRootSync @ react-dom_client.js?v=01c183cf:12408
+performWorkOnRoot @ react-dom_client.js?v=01c183cf:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=01c183cf:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=01c183cf:13414
+processRootScheduleInMicrotask @ react-dom_client.js?v=01c183cf:13437
+(anonymous) @ react-dom_client.js?v=01c183cf:13531
+<ForwardRef>
+exports.jsx @ chunk-T7ATK2ZT.js?v=01c183cf:247
+MenuItem @ @radix-ui_react-dropdown-menu.js?v=01c183cf:621
+react_stack_bottom_frame @ react-dom_client.js?v=01c183cf:18509
+renderWithHooks @ react-dom_client.js?v=01c183cf:5654
+updateForwardRef @ react-dom_client.js?v=01c183cf:7198
+beginWork @ react-dom_client.js?v=01c183cf:8735
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+performUnitOfWork @ react-dom_client.js?v=01c183cf:12561
+workLoopSync @ react-dom_client.js?v=01c183cf:12424
+renderRootSync @ react-dom_client.js?v=01c183cf:12408
+performWorkOnRoot @ react-dom_client.js?v=01c183cf:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=01c183cf:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=01c183cf:13414
+processRootScheduleInMicrotask @ react-dom_client.js?v=01c183cf:13437
+(anonymous) @ react-dom_client.js?v=01c183cf:13531
+<MenuItem>
+exports.jsx @ chunk-T7ATK2ZT.js?v=01c183cf:247
+DropdownMenuItem @ @radix-ui_react-dropdown-menu.js?v=01c183cf:1223
+react_stack_bottom_frame @ react-dom_client.js?v=01c183cf:18509
+renderWithHooks @ react-dom_client.js?v=01c183cf:5654
+updateForwardRef @ react-dom_client.js?v=01c183cf:7198
+beginWork @ react-dom_client.js?v=01c183cf:8735
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+performUnitOfWork @ react-dom_client.js?v=01c183cf:12561
+workLoopSync @ react-dom_client.js?v=01c183cf:12424
+renderRootSync @ react-dom_client.js?v=01c183cf:12408
+performWorkOnRoot @ react-dom_client.js?v=01c183cf:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=01c183cf:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=01c183cf:13414
+processRootScheduleInMicrotask @ react-dom_client.js?v=01c183cf:13437
+(anonymous) @ react-dom_client.js?v=01c183cf:13531
+<DropdownMenuItem>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=01c183cf:247
+_c7 @ dropdown-menu.tsx:84
+react_stack_bottom_frame @ react-dom_client.js?v=01c183cf:18509
+renderWithHooks @ react-dom_client.js?v=01c183cf:5654
+updateForwardRef @ react-dom_client.js?v=01c183cf:7198
+beginWork @ react-dom_client.js?v=01c183cf:8735
+runWithFiberInDEV @ react-dom_client.js?v=01c183cf:997
+performUnitOfWork @ react-dom_client.js?v=01c183cf:12561
+workLoopSync @ react-dom_client.js?v=01c183cf:12424
+renderRootSync @ react-dom_client.js?v=01c183cf:12408
+performWorkOnRoot @ react-dom_client.js?v=01c183cf:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=01c183cf:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=01c183cf:13414
+processRootScheduleInMicrotask @ react-dom_client.js?v=01c183cf:13437
+(anonymous) @ react-dom_client.js?v=01c183cf:13531Understand this error
+vendor-credits.tsx:555 Print error: Error: Attempting to parse an unsupported color function "oklab"
+    at Object.parse (html2canvas.js?v=01c183cf:1673:15)
+    at parse (html2canvas.js?v=01c183cf:3706:26)
+    at new CSSParsedDeclaration2 (html2canvas.js?v=01c183cf:3552:30)
+    at new ElementContainer2 (html2canvas.js?v=01c183cf:3756:21)
+    at createContainer (html2canvas.js?v=01c183cf:4643:10)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4593:25)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4608:13)
+    at parseNodeTree (html2canvas.js?v=01c183cf:4608:13)
+    at parseTree (html2canvas.js?v=01c183cf:4648:3)
+    at html2canvas.js?v=01c183cf:7753:18

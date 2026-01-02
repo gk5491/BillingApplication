@@ -1,0 +1,139 @@
+In Purchases → Expenses → New (/purchases/expenses/new), the Record Expense / Record Mileage screen currently opens inside a modal/dialog overlay.
+
+Because it is rendered inside a modal:
+
+Margins are applied from all sides
+
+A max-width constraint exists
+
+Background content is dimmed
+
+The form never occupies full screen width/height
+
+This behavior is inconsistent with other full-page create flows like Create Invoice and Create Credit Note.
+
+Current Incorrect Behavior
+
+Expense creation opens as a popup modal
+
+Left, right, top, and bottom spacing exists
+
+Modal scroll is applied instead of page scroll
+
+Sidebar feels disconnected
+
+Screen space is wasted
+
+This is not acceptable for a primary create workflow.
+
+Expected Correct Behavior
+
+When opening Purchases → Expenses → New:
+
+❌ No modal / dialog component
+
+❌ No overlay or backdrop
+
+❌ No max-width container
+
+❌ No forced margins from any side
+
+✅ Sidebar remains visible
+
+✅ Content starts immediately after sidebar
+
+✅ Expense form occupies 100% available width and height
+
+✅ Layout matches other full-page create screens (e.g. Create Invoice)
+
+Final layout must be:
+
+| Sidebar | New Expense (Full Page Form) |
+
+Mandatory Implementation Requirements
+
+Completely remove modal/dialog usage
+
+Do not reuse modal components
+
+Do not hide modal with CSS
+
+Modal wrapper must not exist in the DOM
+
+Use route-based page rendering
+
+Route example: /purchases/expenses/new
+
+Render the expense form as a normal page, not a popup
+
+Use the same base page layout container used by:
+
+Create Invoice
+
+Create Credit Note
+
+Other full-page create/edit screens
+
+Layout rules
+
+Width: 100%
+
+Height: full viewport
+
+No max-width
+
+No outer margins from any side
+
+Only standard page padding (same as Create Invoice)
+
+Form behavior
+
+Record Expense and Record Mileage must work inside the same full-page layout
+
+Existing form logic, validations, and API calls must remain unchanged
+
+Only the layout and rendering method should change
+
+What MUST NOT Be Done
+
+❌ Do NOT increase modal width
+
+❌ Do NOT reduce modal padding
+
+❌ Do NOT remove backdrop only
+
+❌ Do NOT apply CSS hacks on modal
+
+❌ Do NOT keep modal structure hidden
+
+If a modal exists in any form, the fix is incorrect.
+
+Acceptance Criteria
+
+purchases/expenses/new opens as a full-page screen
+
+No margins from any side
+
+No overlay or background dimming
+
+Sidebar remains visible
+
+Layout and spacing match Create Invoice
+
+Full screen space is utilized properly
+
+Reference
+
+Use Create Invoice as the single layout reference for:
+
+Width
+
+Height
+
+Spacing
+
+Page behavior
+
+Do not use the existing Expense modal as reference.
+
+Final Note

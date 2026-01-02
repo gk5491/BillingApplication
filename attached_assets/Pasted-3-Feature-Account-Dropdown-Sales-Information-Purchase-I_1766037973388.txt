@@ -1,0 +1,59 @@
+3️⃣ Feature – Account Dropdown (Sales Information + Purchase Information Sections)
+Requirement:
+Account dropdown must provide the following list:
+Other Current Asset   - Advance Tax  - Employee Advance  - Input Tax Credits      • Input CGST
+      • Input IGST
+      • Input SGST
+  - Prepaid Expenses
+  - Reverse Charge Tax Input but not due
+  - TDS ReceivableFixed Asset  - Furniture and Equipment
+Other Current Liability  - Employee Reimbursements  - GST Payable      • Output CGST
+      • Output IGST
+      • Output SGST
+  - Opening Balance Adjustments
+  - Tax Payable
+  - TDS Payable
+  - Unearned RevenueIncome  - Discount  - General Income  - Interest Income  - Late Fee Income  - Other Charges  - Sales  - Shipping Charge
+UI Functionality:
+Must support hierarchical indentation grouping
+Must contain a search bar
+Search should filter through the whole list
+Dropdown should scroll if long list
+Auto-fill Account codes after selection
+4️⃣ Feature – Default Tax Rate Selections
+Location: Sales → New/Edit Item → Default Tax Rates
+Requirements:
+Two dropdowns
+Intra State Tax
+Inter State Tax
+Dropdown must show GST values like:
+GST0 [0%]GST12 [12%]GST18 [18%]GST28 [28%]GST5 [5%] 
+Default must populate based on previous item tax profile.
+Must allow search inside list like in image 4.
+Backend expectations:
+GET /api/taxRates
+General UI/UX Standard Rules
+All dropdowns must support:
+Keyboard navigation
+Type-to-search
+Mouse scroll
+Smooth loading states
+Error handling:
+Show validation error messages inline
+Show toast for API failures
+All actions must be logged and auditable.
+Acceptance Testing Conditions
+A feature must be considered complete only if:
+Filtering:
+Active view hides inactive items.
+Inactive view hides active ones.
+All view shows both categories.
+Units:
+New unit saved → instantly appears in dropdown.
+Unit list scrolls correctly.
+UQC mapping works without breaking existing units.
+Accounts:
+Search returns results instantly.
+Account categories render in correct hierarchy.
+Tax:
+Both tax types selectable and persist on save.
