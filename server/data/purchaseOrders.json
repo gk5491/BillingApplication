@@ -1,6 +1,72 @@
 {
   "purchaseOrders": [
     {
+      "id": "1767356337289",
+      "purchaseOrderNumber": "PO-2025-0016",
+      "referenceNumber": "",
+      "date": "2026-01-02",
+      "deliveryDate": "2026-01-29",
+      "vendorId": "1",
+      "vendorName": "Nilraj Bhilare",
+      "vendorAddress": {},
+      "deliveryAddress": {
+        "attention": "",
+        "street1": "",
+        "street2": "",
+        "city": "",
+        "state": "",
+        "pinCode": "",
+        "countryRegion": "India"
+      },
+      "deliveryAddressType": "organization",
+      "paymentTerms": "Due on Receipt",
+      "shipmentPreference": "",
+      "reverseCharge": true,
+      "items": [
+        {
+          "id": "1",
+          "itemId": "1766056260714",
+          "itemName": "Rice (Copy)",
+          "description": "Premium quality rice sourced from local farms. Ideal for daily cooking, delivers consistent taste and texture.\n",
+          "account": "",
+          "quantity": 1,
+          "rate": 50,
+          "tax": "gst_18",
+          "taxAmount": 9,
+          "amount": 59
+        }
+      ],
+      "subTotal": 50,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "",
+      "taxAmount": 9,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 59,
+      "notes": "",
+      "termsAndConditions": "",
+      "attachments": [],
+      "status": "ISSUED",
+      "receiveStatus": "YET TO BE RECEIVED",
+      "billedStatus": "YET TO BE BILLED",
+      "pdfTemplate": "Standard Template",
+      "createdAt": "2026-01-02T12:18:57.289Z",
+      "updatedAt": "2026-01-02T12:18:57.289Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-02T12:18:57.289Z",
+          "action": "created",
+          "description": "Purchase Order created for ₹59",
+          "user": "Admin User"
+        }
+      ]
+    },
+    {
       "id": "1767096295222",
       "purchaseOrderNumber": "PO-2025-0015",
       "referenceNumber": "",
@@ -1069,5 +1135,5 @@
       "emailCommunications": []
     }
   ],
-  "nextPurchaseOrderNumber": 16
+  "nextPurchaseOrderNumber": 17
 }

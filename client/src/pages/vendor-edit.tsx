@@ -295,6 +295,7 @@ export default function VendorEdit() {
           gstTreatment: vendor.gstTreatment || "",
           sourceOfSupply: vendor.sourceOfSupply || "",
           pan: vendor.pan || "",
+          expenseAccount: vendor.expenseAccount || "",
           msmeRegistered: vendor.msmeRegistered || false,
           msmeRegistrationType: vendor.msmeRegistrationType || "",
           msmeRegistrationNumber: vendor.msmeRegistrationNumber || "",
