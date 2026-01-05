@@ -1117,13 +1117,13 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
           )}
         </TabsContent>
 
-        <TabsContent value="statement" className="flex-1 overflow-auto mt-0">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
+        <TabsContent value="statement" className="flex-1 overflow-auto mt-0 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="p-8 max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-8 no-print">
+              <div className="flex items-center gap-3">
                 <Select value={statementPeriod} onValueChange={setStatementPeriod}>
-                  <SelectTrigger className="w-40 h-9" data-testid="select-period">
-                    <Calendar className="h-4 w-4 mr-2" />
+                  <SelectTrigger className="w-44 h-10 bg-white dark:bg-slate-800 border-slate-200" data-testid="select-period">
+                    <Calendar className="h-4 w-4 mr-2 text-slate-500" />
                     <SelectValue placeholder="This Month" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1131,168 +1131,192 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                     <SelectItem value="last-month">Last Month</SelectItem>
                     <SelectItem value="this-quarter">This Quarter</SelectItem>
                     <SelectItem value="this-year">This Year</SelectItem>
-                    <SelectItem value="custom">Custom</SelectItem>
+                    <SelectItem value="custom">Custom Range</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={statementFilter} onValueChange={setStatementFilter}>
-                  <SelectTrigger className="w-32 h-9" data-testid="select-filter">
-                    <SelectValue placeholder="Filter By: All" />
+                  <SelectTrigger className="w-36 h-10 bg-white dark:bg-slate-800 border-slate-200" data-testid="select-filter">
+                    <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Filter By: All</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="outstanding">Outstanding</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="paid">Paid Only</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="h-9 w-9"
+                  size="sm"
+                  className="h-10 px-4 border-slate-200 hover:bg-slate-50"
                   onClick={handlePrint}
                   data-testid="button-print"
-                  title="Print Statement"
                 >
-                  <Printer className="h-4 w-4" />
+                  <Printer className="h-4 w-4 mr-2" />
+                  Print
                 </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-10 px-4 border-slate-200">
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                      <ChevronDown className="h-3 w-3 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={handleDownloadPDF}>
+                      <FileText className="h-4 w-4 mr-2" /> Download PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDownloadWord}>
+                      <FileText className="h-4 w-4 mr-2" /> Download Word
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-9 w-9"
-                  onClick={handleDownloadPDF}
-                  data-testid="button-download-pdf"
-                  title="Download as PDF"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-9 w-9"
-                  onClick={handleDownloadWord}
-                  data-testid="button-download-word"
-                  title="Download as Word"
-                >
-                  <FileText className="h-4 w-4" />
-                </Button>
-                <Button
-                  className="bg-blue-600 hover:bg-blue-700 gap-1.5"
+                  className="bg-blue-600 hover:bg-blue-700 h-10 px-6 shadow-sm"
                   size="sm"
                   onClick={() => setShowEmailDialog(true)}
                   data-testid="button-send-email"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 mr-2" />
                   Send Email
                 </Button>
               </div>
             </div>
 
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold">Vendor Statement for {vendor.displayName}</h3>
-              <p className="text-sm text-slate-500">From 01/12/2025 To 31/12/2025</p>
-            </div>
-
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm p-8 max-w-4xl mx-auto">
-              <div className="flex justify-between mb-8">
-                <div>
-                  {branding?.logo?.url ? (
-                    <img src={branding.logo.url} alt="Organization Logo" className="h-16 w-auto object-contain" />
-                  ) : (
-                    <h4 className="text-xl font-bold text-blue-600">{currentOrg?.name || 'Organization'}</h4>
-                  )}
-                </div>
-                <div className="text-right text-sm">
-                  <p className="font-medium">{currentOrg?.name}</p>
-                  {currentOrg?.street1 && <p>{currentOrg.street1}</p>}
-                  {currentOrg?.street2 && <p>{currentOrg.street2}</p>}
-                  <p>
-                    {[currentOrg?.city, currentOrg?.state, currentOrg?.postalCode].filter(Boolean).join(', ')}
-                  </p>
-                  {currentOrg?.gstin && <p>GSTIN {currentOrg.gstin}</p>}
-                  {currentOrg?.email && <p>{currentOrg.email}</p>}
-                  {currentOrg?.website && <p>{currentOrg.website}</p>}
-                </div>
-              </div>
-
-              <div className="flex mb-8">
-                <div className="w-1/2">
-                  <p className="text-sm text-slate-500 mb-1">To</p>
-                  <p className="font-medium text-blue-600">{vendor.displayName}</p>
-                  {vendor.companyName && <p className="text-sm">{vendor.companyName}</p>}
-                  <div className="text-sm">
-                    {formatAddress(vendor.billingAddress).map((line, i) => (
-                      <p key={i}>{line}</p>
-                    ))}
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden print:border-0 print:shadow-none" id="statement-print-area">
+              {/* Header Design */}
+              <div className="p-10 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-800">
+                <div className="flex flex-col md:flex-row justify-between gap-10">
+                  <div className="space-y-6">
+                    {branding?.logo?.url ? (
+                      <img src={branding.logo.url} alt="Organization Logo" className="h-20 w-auto object-contain" />
+                    ) : (
+                      <h4 className="text-3xl font-black tracking-tighter text-blue-600">{currentOrg?.name || 'Organization'}</h4>
+                    )}
+                    <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                      <p className="font-bold text-slate-900 dark:text-white text-base">{currentOrg?.name}</p>
+                      {currentOrg?.street1 && <p>{currentOrg.street1}</p>}
+                      {currentOrg?.street2 && <p>{currentOrg.street2}</p>}
+                      <p>{[currentOrg?.city, currentOrg?.state, currentOrg?.postalCode].filter(Boolean).join(', ')}</p>
+                      {currentOrg?.gstin && <p className="pt-1"><span className="font-semibold text-slate-800 dark:text-slate-200">GSTIN:</span> {currentOrg.gstin}</p>}
+                    </div>
                   </div>
-                  {vendor.pan && <p className="text-sm">PAN {vendor.pan}</p>}
-                </div>
-                <div className="w-1/2 text-right">
-                  <h4 className="text-xl font-bold mb-2">Statement of Accounts</h4>
-                  <p className="text-sm text-blue-600">01/12/2025 To 31/12/2025</p>
+                  
+                  <div className="text-right flex flex-col justify-between items-end">
+                    <div className="text-right mb-8">
+                      <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Statement</h1>
+                      <p className="text-blue-600 font-bold tracking-widest text-sm">01/12/2025 TO 31/12/2025</p>
+                    </div>
+                    
+                    <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400 max-w-xs">
+                      <p className="font-bold text-slate-500 uppercase tracking-wider text-xs mb-2">Vendor Details</p>
+                      <p className="font-black text-blue-600 text-xl leading-none mb-1">{vendor.displayName}</p>
+                      {vendor.companyName && <p className="font-bold text-slate-800 dark:text-slate-200">{vendor.companyName}</p>}
+                      <div className="space-y-0.5">
+                        {formatAddress(vendor.billingAddress).map((line, i) => (
+                          <p key={i}>{line}</p>
+                        ))}
+                      </div>
+                      {vendor.pan && <p className="pt-1"><span className="font-semibold text-slate-800 dark:text-slate-200">PAN:</span> {vendor.pan}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mb-8">
-                <h5 className="text-center font-semibold mb-4">Account Summary</h5>
-                <table className="w-full max-w-sm mx-auto text-sm">
-                  <tbody>
-                    <tr>
-                      <td className="py-1">Opening Balance</td>
-                      <td className="py-1 text-right">{formatCurrency(vendor.openingBalance || 0)}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">Billed Amount</td>
-                      <td className="py-1 text-right">{formatCurrency(billedAmount)}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">Amount Paid</td>
-                      <td className="py-1 text-right text-green-600">{formatCurrency(amountPaid)}</td>
-                    </tr>
-                    <tr className="border-t font-medium">
-                      <td className="py-2">Balance Due</td>
-                      <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Summary Cards */}
+              <div className="px-10 py-8 bg-slate-50/30 dark:bg-slate-900/20">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Opening Balance</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(vendor.openingBalance || 0)}</p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Billed Amount</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(billedAmount)}</p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                    <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Amount Paid</p>
+                    <p className="text-xl font-bold text-blue-600">{formatCurrency(amountPaid)}</p>
+                  </div>
+                  <div className="bg-blue-600 p-5 rounded-xl border border-blue-700 shadow-lg transform hover:-translate-y-1 transition-all">
+                    <p className="text-[10px] font-black text-blue-100 uppercase tracking-widest mb-2">Balance Due</p>
+                    <p className="text-2xl font-black text-white">{formatCurrency(balanceDue)}</p>
+                  </div>
+                </div>
               </div>
 
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="py-2 text-left">Date</th>
-                    <th className="py-2 text-left">Transactions</th>
-                    <th className="py-2 text-left">Details</th>
-                    <th className="py-2 text-right">Amount</th>
-                    <th className="py-2 text-right">Payments</th>
-                    <th className="py-2 text-right">Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statementTransactions.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-4 text-center text-slate-500">No transactions for this period</td>
-                    </tr>
-                  ) : (
-                    statementTransactions.map((tx, idx) => (
-                      <tr key={tx.id || idx} className="border-b last:border-0">
-                        <td className="py-2">{formatDate(tx.date)}</td>
-                        <td className="py-2">{tx.type} {tx.number}</td>
-                        <td className="py-2">{tx.status}</td>
-                        <td className="py-2 text-right">{tx.type === 'Bill' || tx.type === 'Expense' ? formatCurrency(tx.amount) : ''}</td>
-                        <td className="py-2 text-right">{tx.type === 'Payment' || (tx.amount - tx.balance > 0) ? formatCurrency(tx.type === 'Payment' ? tx.amount : (tx.amount - tx.balance)) : ''}</td>
-                        <td className="py-2 text-right">{formatCurrency(tx.balance || 0)}</td>
+              {/* Transactions Table */}
+              <div className="px-10 pb-10">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-900 dark:bg-slate-700 text-white">
+                        <th className="py-4 px-6 text-left font-bold uppercase tracking-widest text-[10px]">Date</th>
+                        <th className="py-4 px-6 text-left font-bold uppercase tracking-widest text-[10px]">Transaction Details</th>
+                        <th className="py-4 px-6 text-center font-bold uppercase tracking-widest text-[10px]">Status</th>
+                        <th className="py-4 px-6 text-right font-bold uppercase tracking-widest text-[10px]">Amount</th>
+                        <th className="py-4 px-6 text-right font-bold uppercase tracking-widest text-[10px]">Payments</th>
+                        <th className="py-4 px-6 text-right font-bold uppercase tracking-widest text-[10px]">Balance</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t font-medium">
-                    <td colSpan={5} className="py-2 text-right">Balance Due</td>
-                    <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
-                  </tr>
-                </tfoot>
-              </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                      {statementTransactions.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-16 text-center text-slate-400 italic font-medium">
+                            <BookOpen className="h-8 w-8 mx-auto mb-3 opacity-20" />
+                            No transactions found for the selected period
+                          </td>
+                        </tr>
+                      ) : (
+                        statementTransactions.map((tx, idx) => (
+                          <tr key={tx.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                            <td className="py-4 px-6 whitespace-nowrap text-slate-500 dark:text-slate-400 font-medium">{formatDate(tx.date)}</td>
+                            <td className="py-4 px-6">
+                              <div className="flex flex-col">
+                                <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">{tx.type}</span>
+                                <span className="text-xs text-slate-400 font-medium">#{tx.number}</span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6 text-center">
+                              <Badge variant="outline" className={`text-[9px] h-5 px-2 font-black uppercase tracking-widest border-2 ${
+                                tx.status === 'PAID' ? 'bg-green-50 text-green-700 border-green-100' : 
+                                tx.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                'bg-slate-50 text-slate-600 border-slate-100'
+                              }`}>
+                                {tx.status}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-6 text-right font-bold text-slate-900 dark:text-white">
+                              {tx.type === 'Bill' || tx.type === 'Expense' ? formatCurrency(tx.amount) : '—'}
+                            </td>
+                            <td className="py-4 px-6 text-right text-blue-600 font-bold">
+                              {tx.type === 'Payment' || (tx.amount - (tx.balance || 0) > 0) ? 
+                                formatCurrency(tx.type === 'Payment' ? tx.amount : (tx.amount - (tx.balance || 0))) : 
+                                '—'
+                              }
+                            </td>
+                            <td className="py-4 px-6 text-right font-black text-slate-900 dark:text-white bg-slate-50/30 dark:bg-slate-900/10">
+                              {formatCurrency(tx.balance || 0)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-slate-900 dark:bg-slate-800 text-white font-black border-t-4 border-blue-600">
+                        <td colSpan={5} className="py-5 px-6 text-right uppercase tracking-widest text-xs">Closing Balance Due</td>
+                        <td className="py-5 px-6 text-right text-xl">{formatCurrency(balanceDue)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                
+                <div className="mt-10 pt-10 border-t border-slate-100 dark:border-slate-700 text-center">
+                  <p className="text-xs text-slate-400 font-medium uppercase tracking-[0.2em]">Thank you for your business</p>
+                </div>
+              </div>
             </div>
           </div>
         </TabsContent>
