@@ -1294,7 +1294,7 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                             <td className="py-4 px-6 text-right text-blue-600 font-bold">
                               {tx.type === 'Payment' || (tx.amount - (tx.balance || 0) > 0) ? 
                                 formatCurrency(tx.type === 'Payment' ? tx.amount : (tx.amount - (tx.balance || 0))) : 
-                                '—'
+                                '₹0.00'
                               }
                             </td>
                             <td className="py-4 px-6 text-right font-black text-slate-900 dark:text-white bg-slate-50/30 dark:bg-slate-900/10">
