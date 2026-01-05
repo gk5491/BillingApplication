@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import { addLogotoPDF, addSignaturetoPDF } from "@/lib/logo-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -129,6 +130,9 @@ interface InvoiceDetail {
     customerNotes: string;
     termsAndConditions: string;
     status: string;
+    gstin?: string;
+    email?: string;
+    phone?: string;
     sourceType: string | null;
     sourceNumber: string | null;
     payments: any[];
@@ -296,129 +300,147 @@ export default function Invoices() {
     };
 
     const handleDownloadPDF = async (invoice: InvoiceDetail) => {
-        const doc = new jsPDF();
+        try {
+            const doc = new jsPDF();
 
-        // Add organization logo and signature
-        await addLogotoPDF(doc, { maxWidth: 40, maxHeight: 40, x: 14, y: 12 });
-        await addSignaturetoPDF(doc, { maxWidth: 40, maxHeight: 20, x: 14, y: 250 });
+            // Add organization logo and signature
+            try {
+                await addLogotoPDF(doc, { maxWidth: 40, maxHeight: 40, x: 14, y: 12 });
+            } catch (error) {
+                console.log("Logo not available, continuing without logo");
+            }
 
-        doc.setFontSize(24);
-        doc.setFont("helvetica", "bold");
-        doc.text("INVOICE", 190, 30, { align: "right" });
+            try {
+                await addSignaturetoPDF(doc, { maxWidth: 40, maxHeight: 20, x: 14, y: 250 });
+            } catch (error) {
+                console.log("Signature not available, continuing without signature");
+            }
 
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text(`# ${invoice.invoiceNumber}`, 190, 38, { align: "right" });
-        doc.text(`Balance Due`, 190, 48, { align: "right" });
-        doc.setFont("helvetica", "bold");
-        doc.text(formatCurrency(invoice.balanceDue), 190, 56, { align: "right" });
+            doc.setFontSize(24);
+            doc.setFont("helvetica", "bold");
+            doc.text("INVOICE", 190, 30, { align: "right" });
 
-        // Company info from organization
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text(currentOrganization?.name || "Your Company", 20, 30);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        if (currentOrganization?.street1) {
-            doc.text(currentOrganization.street1, 20, 38);
-        }
-        if (currentOrganization?.street2) {
-            doc.text(currentOrganization.street2, 20, 44);
-        }
-        if (currentOrganization?.city) {
-            doc.text(`${currentOrganization.city}, ${currentOrganization.state || ''} ${currentOrganization.postalCode || ''}`, 20, 50);
-        }
-        if (currentOrganization?.email) {
-            doc.text(currentOrganization.email, 20, 56);
-        }
-        if (currentOrganization?.gstin) {
-            doc.text(`GSTIN: ${currentOrganization.gstin}`, 20, 62);
-        }
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.text("BILL TO", 20, 70);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(invoice.customerName, 20, 78);
-        const billAddress = formatAddress(invoice.billingAddress);
-        billAddress.forEach((line, i) => {
-            doc.text(line, 20, 84 + (i * 5));
-        });
-
-        doc.text(`Invoice Date: ${formatDate(invoice.date)}`, 120, 78);
-        doc.text(`Terms: ${invoice.paymentTerms}`, 120, 84);
-        doc.text(`Due Date: ${formatDate(invoice.dueDate)}`, 120, 90);
-
-        doc.setDrawColor(200);
-        doc.setLineWidth(0.5);
-        doc.line(20, 110, 190, 110);
-
-        doc.setFont("helvetica", "bold");
-        doc.text("#", 20, 118);
-        doc.text("Item", 30, 118);
-        doc.text("Qty", 100, 118);
-        doc.text("Rate", 130, 118);
-        doc.text("Amount", 190, 118, { align: "right" });
-
-        doc.line(20, 122, 190, 122);
-
-        let yPos = 130;
-        doc.setFont("helvetica", "normal");
-        invoice.items.forEach((item, index) => {
-            doc.text(String(index + 1), 20, yPos);
-            doc.text(item.name || 'Item', 30, yPos);
-            doc.text(String(item.quantity || 1), 100, yPos);
-            doc.text(formatCurrency(item.rate || 0), 130, yPos);
-            doc.text(formatCurrency(item.amount || 0), 190, yPos, { align: "right" });
-            yPos += 8;
-        });
-
-        yPos += 10;
-        doc.line(120, yPos, 190, yPos);
-        yPos += 8;
-
-        doc.text("Sub Total", 120, yPos);
-        doc.text(formatCurrency(invoice.subTotal), 190, yPos, { align: "right" });
-        yPos += 8;
-
-        if (invoice.cgst > 0) {
-            doc.text("CGST", 120, yPos);
-            doc.text(formatCurrency(invoice.cgst), 190, yPos, { align: "right" });
-            yPos += 8;
-        }
-        if (invoice.sgst > 0) {
-            doc.text("SGST", 120, yPos);
-            doc.text(formatCurrency(invoice.sgst), 190, yPos, { align: "right" });
-            yPos += 8;
-        }
-
-        doc.setFont("helvetica", "bold");
-        doc.text("Total", 120, yPos);
-        doc.text(formatCurrency(invoice.total), 190, yPos, { align: "right" });
-        yPos += 8;
-
-        if (invoice.amountPaid > 0) {
+            doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
-            doc.text("Payment Made", 120, yPos);
-            doc.text(`(-) ${formatCurrency(invoice.amountPaid)}`, 190, yPos, { align: "right" });
+            doc.text(`# ${invoice.invoiceNumber}`, 190, 38, { align: "right" });
+            doc.text(`Balance Due`, 190, 48, { align: "right" });
+            doc.setFont("helvetica", "bold");
+            doc.text(formatCurrency(invoice.balanceDue), 190, 56, { align: "right" });
+
+            // Company info from organization
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text(currentOrganization?.name || "Your Company", 20, 30);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            if (currentOrganization?.street1) {
+                doc.text(currentOrganization.street1, 20, 38);
+            }
+            if (currentOrganization?.street2) {
+                doc.text(currentOrganization.street2, 20, 44);
+            }
+            if (currentOrganization?.city) {
+                doc.text(`${currentOrganization.city}, ${currentOrganization.state || ''} ${currentOrganization.postalCode || ''}`, 20, 50);
+            }
+            if (currentOrganization?.email) {
+                doc.text(currentOrganization.email, 20, 56);
+            }
+            if (currentOrganization?.gstin) {
+                doc.text(`GSTIN: ${currentOrganization.gstin}`, 20, 62);
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.text("BILL TO", 20, 70);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(invoice.customerName, 20, 78);
+            const billAddress = formatAddress(invoice.billingAddress);
+            billAddress.forEach((line, i) => {
+                doc.text(line, 20, 84 + (i * 5));
+            });
+
+            doc.text(`Invoice Date: ${formatDate(invoice.date)}`, 120, 78);
+            doc.text(`Terms: ${invoice.paymentTerms}`, 120, 84);
+            doc.text(`Due Date: ${formatDate(invoice.dueDate)}`, 120, 90);
+
+            doc.setDrawColor(200);
+            doc.setLineWidth(0.5);
+            doc.line(20, 110, 190, 110);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("#", 20, 118);
+            doc.text("Item", 30, 118);
+            doc.text("Qty", 100, 118);
+            doc.text("Rate", 130, 118);
+            doc.text("Amount", 190, 118, { align: "right" });
+
+            doc.line(20, 122, 190, 122);
+
+            let yPos = 130;
+            doc.setFont("helvetica", "normal");
+            invoice.items.forEach((item, index) => {
+                doc.text(String(index + 1), 20, yPos);
+                doc.text(item.name || 'Item', 30, yPos);
+                doc.text(String(item.quantity || 1), 100, yPos);
+                doc.text(formatCurrency(item.rate || 0), 130, yPos);
+                doc.text(formatCurrency(item.amount || 0), 190, yPos, { align: "right" });
+                yPos += 8;
+            });
+
+            yPos += 10;
+            doc.line(120, yPos, 190, yPos);
             yPos += 8;
+
+            doc.text("Sub Total", 120, yPos);
+            doc.text(formatCurrency(invoice.subTotal), 190, yPos, { align: "right" });
+            yPos += 8;
+
+            if (invoice.cgst > 0) {
+                doc.text("CGST", 120, yPos);
+                doc.text(formatCurrency(invoice.cgst), 190, yPos, { align: "right" });
+                yPos += 8;
+            }
+            if (invoice.sgst > 0) {
+                doc.text("SGST", 120, yPos);
+                doc.text(formatCurrency(invoice.sgst), 190, yPos, { align: "right" });
+                yPos += 8;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Total", 120, yPos);
+            doc.text(formatCurrency(invoice.total), 190, yPos, { align: "right" });
+            yPos += 8;
+
+            if (invoice.amountPaid > 0) {
+                doc.setFont("helvetica", "normal");
+                doc.text("Payment Made", 120, yPos);
+                doc.text(`(-) ${formatCurrency(invoice.amountPaid)}`, 190, yPos, { align: "right" });
+                yPos += 8;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Balance Due", 120, yPos);
+            doc.text(formatCurrency(invoice.balanceDue), 190, yPos, { align: "right" });
+
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, 280, { align: "center" });
+
+            doc.save(`${invoice.invoiceNumber}.pdf`);
+
+            toast({
+                title: "PDF Downloaded",
+                description: `${invoice.invoiceNumber}.pdf has been downloaded successfully.`,
+            });
+        } catch (error) {
+            console.error("PDF generation error:", error);
+            toast({
+                title: "Failed to download PDF",
+                description: "An error occurred during PDF generation. Please try again.",
+                variant: "destructive"
+            });
         }
-
-        doc.setFont("helvetica", "bold");
-        doc.text("Balance Due", 120, yPos);
-        doc.text(formatCurrency(invoice.balanceDue), 190, yPos, { align: "right" });
-
-        doc.setFontSize(8);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, 280, { align: "center" });
-
-        doc.save(`${invoice.invoiceNumber}.pdf`);
-
-        toast({
-            title: "PDF Downloaded",
-            description: `${invoice.invoiceNumber}.pdf has been downloaded successfully.`,
-        });
     };
 
     const handleSendInvoice = async () => {
@@ -620,116 +642,46 @@ export default function Invoices() {
                     <html>
                         <head>
                             <title>Invoice - ${selectedInvoice?.invoiceNumber}</title>
+                            <script src="https://cdn.tailwindcss.com"></script>
                             <style>
-                                * { margin: 0; padding: 0; box-sizing: border-box; }
+                                @page { size: A4; margin: 0; }
                                 body { 
-                                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-                                    background-color: white; 
-                                    display: flex;
-                                    justify-content: center;
-                                    padding: 20mm;
+                                    margin: 0; 
+                                    padding: 0; 
+                                    background-color: white;
+                                    -webkit-print-color-adjust: exact !important; 
+                                    print-color-adjust: exact !important; 
                                 }
-                                #invoice-pdf-content {
-                                    width: 210mm;
-                                    min-height: 297mm;
-                                    background: white;
-                                    padding: 0;
+                                #print-container { 
+                                    width: 210mm; 
+                                    min-height: 297mm; 
+                                    margin: 0 auto; 
+                                    background: white; 
                                 }
-                                .p-12 { padding: 3rem; }
-                                .mb-8 { margin-bottom: 2rem; }
-                                .mb-6 { margin-bottom: 1.5rem; }
-                                .mb-4 { margin-bottom: 1rem; }
-                                .mb-3 { margin-bottom: 0.75rem; }
-                                .mb-2 { margin-bottom: 0.5rem; }
-                                .mb-1 { margin-bottom: 0.25rem; }
-                                .mt-2 { margin-top: 0.5rem; }
-                                .mt-4 { margin-top: 1rem; }
-                                .pb-4 { padding-bottom: 1rem; }
-                                .pt-6 { padding-top: 1.5rem; }
-                                .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-                                .px-4 { padding-left: 1rem; padding-right: 1rem; }
-                                .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-                                .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-                                .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-                                .p-3 { padding: 0.75rem; }
-                                .p-4 { padding: 1rem; }
-                                .flex { display: flex; }
-                                .justify-between { justify-content: space-between; }
-                                .items-start { align-items: flex-start; }
-                                .grid { display: grid; }
-                                .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-                                .gap-12 { gap: 3rem; }
-                                .space-y-0-5 > * + * { margin-top: 0.125rem; }
-                                .space-y-3 > * + * { margin-top: 0.75rem; }
-                                .flex-1 { flex: 1 1 0%; }
-                                .text-right { text-align: right; }
-                                .text-center { text-align: center; }
-                                .text-xs { font-size: 0.75rem; line-height: 1rem; }
-                                .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-                                .text-base { font-size: 1rem; line-height: 1.5rem; }
-                                .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-                                .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-                                .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-                                .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-                                .font-bold { font-weight: 700; }
-                                .font-semibold { font-weight: 600; }
-                                .font-medium { font-weight: 500; }
-                                .uppercase { text-transform: uppercase; }
-                                .tracking-wide { letter-spacing: 0.025em; }
-                                .text-slate-500 { color: #64748b; }
-                                .text-slate-600 { color: #475569; }
-                                .text-slate-700 { color: #334155; }
-                                .text-slate-900 { color: #0f172a; }
-                                .text-blue-600 { color: #2563eb; }
-                                .text-green-600 { color: #16a34a; }
-                                .bg-slate-50 { background-color: #f8fafc; }
-                                .bg-slate-100 { background-color: #f1f5f9; }
-                                .border { border: 1px solid #e2e8f0; }
-                                .border-b { border-bottom: 1px solid #e2e8f0; }
-                                .border-y-2 { border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; }
-                                .border-t { border-top: 1px solid #e2e8f0; }
-                                .border-t-2 { border-top: 2px solid #cbd5e1; }
-                                .border-slate-100 { border-color: #f1f5f9; }
-                                .border-slate-200 { border-color: #e2e8f0; }
-                                .border-slate-300 { border-color: #cbd5e1; }
-                                .rounded { border-radius: 0.25rem; }
-                                .rounded-lg { border-radius: 0.5rem; }
-                                .w-96 { width: 24rem; }
-                                .leading-relaxed { line-height: 1.625; }
-                                table { width: 100%; border-collapse: collapse; }
-                                th { 
-                                    padding: 0.75rem; 
-                                    text-align: left; 
-                                    font-size: 0.75rem;
-                                    font-weight: 700;
-                                    color: #334155;
-                                    text-transform: uppercase;
-                                    letter-spacing: 0.05em;
-                                }
-                                td { 
-                                    padding: 1rem 0.75rem; 
-                                    font-size: 0.875rem;
-                                }
-                                @page {
-                                    size: A4;
-                                    margin: 0;
-                                }
+                                .bg-slate-50\\/50 { background-color: rgb(248 250 252 / 0.5) !important; }
+                                .bg-slate-100 { background-color: rgb(241 245 249) !important; }
                                 @media print {
-                                    body { 
-                                        padding: 0;
-                                        margin: 0;
-                                    }
-                                    .no-print { display: none; }
+                                    body { background: white; }
+                                    #print-container { width: 100%; border: none !important; }
                                 }
                             </style>
                         </head>
                         <body>
-                            ${printContent.innerHTML}
+                            <div id="print-container">
+                                ${printContent.innerHTML}
+                            </div>
+                            <script>
+                                window.onload = () => {
+                                    setTimeout(() => {
+                                        window.print();
+                                        window.close();
+                                    }, 500);
+                                };
+                            </script>
                         </body>
                     </html>
                 `);
                 printWindow.document.close();
-                printWindow.print();
             }
         } else {
             setShowPdfPreview(true);
@@ -740,32 +692,189 @@ export default function Invoices() {
     const handleDownloadPDFLocal = async () => {
         if (!selectedInvoice) return;
 
-        // Check if PDF preview is already shown
+        // Store original PDF preview state
+        const wasShowingPdf = showPdfPreview;
+
+        // Ensure PDF view is enabled so we can capture it
+        if (!wasShowingPdf) {
+            setShowPdfPreview(true);
+            // Wait for the DOM to update
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
         const pdfElement = document.getElementById('invoice-pdf-content');
 
         if (!pdfElement) {
-            // If PDF preview is not shown, show it first and wait
-            setShowPdfPreview(true);
-            setTimeout(handleDownloadPDFLocal, 300);
+            toast({
+                title: "PDF Preview Not Available",
+                description: "Unable to generate PDF. Please try again.",
+                variant: "destructive"
+            });
             return;
         }
 
         try {
-            // Import the unified PDF utility
-            const { generatePDFFromElement } = await import("@/lib/pdf-utils");
+            // Wait for all images to load
+            const images = pdfElement.getElementsByTagName('img');
+            const imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise((resolve) => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            });
+            await Promise.all(imagePromises);
 
-            // Generate PDF from the existing PDF view
-            await generatePDFFromElement("invoice-pdf-content", `Invoice-${selectedInvoice.invoiceNumber}.pdf`);
+            // Small delay to ensure everything is rendered
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            const canvas = await html2canvas(pdfElement, {
+                scale: 2, // Higher quality
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                imageTimeout: 0,
+                removeContainer: true,
+                foreignObjectRendering: false,
+                windowWidth: pdfElement.scrollWidth,
+                windowHeight: pdfElement.scrollHeight,
+                onclone: (clonedDoc: Document) => {
+                    const el = clonedDoc.getElementById('invoice-pdf-content');
+                    if (el) {
+                        el.style.width = '210mm';
+                        el.style.minHeight = '297mm';
+                        el.style.display = 'block';
+                        el.style.margin = '0';
+                        el.style.padding = '0';
+                        el.style.border = 'none';
+                        el.style.backgroundColor = 'white';
+
+                        // Remove all existing stylesheets that might contain oklch
+                        const existingStyles = clonedDoc.querySelectorAll('link[rel="stylesheet"], style');
+                        existingStyles.forEach(style => {
+                            const content = style.textContent || '';
+                            if (content.includes('oklch') || content.includes('color-mix')) {
+                                style.remove();
+                            }
+                        });
+
+                        // Comprehensive style override with RGB only (no oklch)
+                        const style = clonedDoc.createElement('style');
+                        style.innerHTML = `
+                            * { 
+                                -webkit-print-color-adjust: exact !important; 
+                                print-color-adjust: exact !important; 
+                                color-adjust: exact !important;
+                            }
+                            
+                            /* Override all potential oklch colors with RGB */
+                            .bg-slate-50\\/50, [class*="bg-slate-50/50"] { background-color: rgba(248, 250, 252, 0.5) !important; }
+                            .bg-slate-100, [class*="bg-slate-100"] { background-color: rgb(241, 245, 249) !important; }
+                            .bg-slate-50, [class*="bg-slate-50"] { background-color: rgb(248, 250, 252) !important; }
+                            .bg-green-50\\/30, [class*="bg-green-50/30"] { background-color: rgba(240, 253, 244, 0.3) !important; }
+                            .bg-white, [class*="bg-white"] { background-color: rgb(255, 255, 255) !important; }
+                            
+                            /* Border colors */
+                            .border-slate-200, [class*="border-slate-200"] { border-color: rgb(226, 232, 240) !important; }
+                            .border-slate-300, [class*="border-slate-300"] { border-color: rgb(203, 213, 225) !important; }
+                            .border-slate-100, [class*="border-slate-100"] { border-color: rgb(241, 245, 249) !important; }
+                            .border-slate-900, [class*="border-slate-900"] { border-color: rgb(15, 23, 42) !important; }
+                            .border-y-2, .border-t-2, .border-b-2 { border-color: rgb(203, 213, 225) !important; }
+                            
+                            /* Text colors */
+                            .text-slate-900, [class*="text-slate-900"] { color: rgb(15, 23, 42) !important; }
+                            .text-slate-700, [class*="text-slate-700"] { color: rgb(51, 65, 85) !important; }
+                            .text-slate-600, [class*="text-slate-600"] { color: rgb(71, 85, 105) !important; }
+                            .text-slate-500, [class*="text-slate-500"] { color: rgb(100, 116, 139) !important; }
+                            .text-slate-400, [class*="text-slate-400"] { color: rgb(148, 163, 184) !important; }
+                            .text-green-600, [class*="text-green-600"] { color: rgb(22, 163, 74) !important; }
+                            .text-black, [class*="text-black"] { color: rgb(0, 0, 0) !important; }
+                            
+                            /* Badge colors */
+                            .bg-green-100 { background-color: rgb(220, 252, 231) !important; }
+                            .bg-green-50 { background-color: rgb(240, 253, 244) !important; }
+                            .text-green-700 { color: rgb(21, 128, 61) !important; }
+                            .border-green-200 { border-color: rgb(187, 247, 208) !important; }
+                            
+                            .bg-orange-100 { background-color: rgb(255, 237, 213) !important; }
+                            .text-orange-700 { color: rgb(194, 65, 12) !important; }
+                            .text-orange-600 { color: rgb(234, 88, 12) !important; }
+                            .border-orange-200 { border-color: rgb(254, 215, 170) !important; }
+                            
+                            .bg-red-100 { background-color: rgb(254, 226, 226) !important; }
+                            .text-red-700 { color: rgb(185, 28, 28) !important; }
+                            .border-red-200 { border-color: rgb(254, 202, 202) !important; }
+                            
+                            .bg-blue-100 { background-color: rgb(219, 234, 254) !important; }
+                            .text-blue-700 { color: rgb(29, 78, 216) !important; }
+                            .border-blue-200 { border-color: rgb(191, 219, 254) !important; }
+                            
+                            .bg-yellow-100 { background-color: rgb(254, 249, 195) !important; }
+                            .text-yellow-700 { color: rgb(161, 98, 7) !important; }
+                            .border-yellow-200 { border-color: rgb(254, 240, 138) !important; }
+                            
+                            /* Container */
+                            #invoice-pdf-content { 
+                                width: 210mm !important; 
+                                min-height: 297mm !important; 
+                                background: rgb(255, 255, 255) !important; 
+                            }
+                        `;
+                        clonedDoc.head.appendChild(style);
+
+                        // Force inline styles on all elements to override any remaining oklch
+                        const allElements = el.querySelectorAll('*');
+                        allElements.forEach((element: any) => {
+                            const computedStyle = window.getComputedStyle(element);
+                            const bgColor = computedStyle.backgroundColor;
+                            const color = computedStyle.color;
+                            const borderColor = computedStyle.borderColor;
+
+                            // Only set if valid RGB/RGBA
+                            if (bgColor && bgColor.startsWith('rgb')) {
+                                element.style.backgroundColor = bgColor;
+                            }
+                            if (color && color.startsWith('rgb')) {
+                                element.style.color = color;
+                            }
+                            if (borderColor && borderColor.startsWith('rgb')) {
+                                element.style.borderColor = borderColor;
+                            }
+                        });
+                    }
+                }
+            });
+
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                compress: true
+            });
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            pdf.save(`Invoice-${selectedInvoice.invoiceNumber}.pdf`);
+
+            // Restore original PDF preview state
+            if (!wasShowingPdf) {
+                setShowPdfPreview(false);
+            }
 
             toast({
                 title: "PDF Downloaded",
                 description: `Invoice ${selectedInvoice.invoiceNumber} has been downloaded successfully.`
             });
         } catch (error) {
-            console.error("PDF generation error:", error);
+            console.error("PDF generation error details:", error);
             toast({
                 title: "Failed to download PDF",
-                description: "Please try again.",
+                description: "An error occurred during PDF generation. Please try again or use the Print option.",
                 variant: "destructive"
             });
         }
@@ -1134,28 +1243,57 @@ export default function Invoices() {
 
                                                     {/* Bill To and Invoice Details */}
                                                     <div className="grid grid-cols-2 gap-12 mb-8">
-                                                        <div>
-                                                            <p className="text-xs text-slate-500 uppercase font-bold mb-3 tracking-wide">BILL TO</p>
-                                                            <p className="font-bold text-blue-600 mb-2 text-base">{selectedInvoice.customerName}</p>
-                                                            <div className="text-sm text-slate-700 space-y-0.5">
-                                                                {formatAddress(selectedInvoice.billingAddress).map((line, i) => (
-                                                                    <p key={i}>{line}</p>
-                                                                ))}
+                                                        <div className="bg-slate-50/50 p-5 rounded-xl border border-slate-100">
+                                                            <p className="text-[10px] text-slate-400 uppercase font-bold mb-2 tracking-[0.1em]">BILL TO</p>
+                                                            <p className="font-bold text-slate-900 mb-1 text-base leading-tight">{selectedInvoice.customerName}</p>
+                                                            <div className="text-[13px] text-slate-600 space-y-0.5 font-medium leading-relaxed">
+                                                                {selectedInvoice.billingAddress?.street && <p>{selectedInvoice.billingAddress.street}</p>}
+                                                                {(selectedInvoice.billingAddress?.city || selectedInvoice.billingAddress?.state || selectedInvoice.billingAddress?.pincode) && (
+                                                                    <p>
+                                                                        {[
+                                                                            selectedInvoice.billingAddress?.city,
+                                                                            selectedInvoice.billingAddress?.state,
+                                                                            selectedInvoice.billingAddress?.pincode
+                                                                        ].filter(Boolean).join(', ')}
+                                                                    </p>
+                                                                )}
+                                                                {selectedInvoice.billingAddress?.country && <p>{selectedInvoice.billingAddress.country}</p>}
+
+                                                                <div className="mt-2.5 pt-2.5 border-t border-slate-200/50 space-y-0.5 text-[12px]">
+                                                                    {selectedInvoice.gstin && (
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-[9px] text-slate-400 font-bold min-w-[40px]">GSTIN</span>
+                                                                            <span className="text-slate-700 font-semibold">{selectedInvoice.gstin}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {selectedInvoice.email && (
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-[9px] text-slate-400 font-bold min-w-[40px]">EMAIL</span>
+                                                                            <span className="text-slate-700">{selectedInvoice.email}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {selectedInvoice.phone && (
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-[9px] text-slate-400 font-bold min-w-[40px]">PHONE</span>
+                                                                            <span className="text-slate-700">{selectedInvoice.phone}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="text-sm">
-                                                            <div className="space-y-3">
-                                                                <div className="flex justify-between border-b border-slate-100 pb-2">
-                                                                    <span className="text-slate-600 font-medium">Invoice Date</span>
-                                                                    <span className="font-semibold text-slate-900">{formatDate(selectedInvoice.date)}</span>
+                                                        <div className="flex flex-col justify-center">
+                                                            <div className="space-y-4">
+                                                                <div className="flex justify-between items-baseline group">
+                                                                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Invoice Date</span>
+                                                                    <span className="text-sm font-semibold text-slate-900">{formatDate(selectedInvoice.date)}</span>
                                                                 </div>
-                                                                <div className="flex justify-between border-b border-slate-100 pb-2">
-                                                                    <span className="text-slate-600 font-medium">Terms</span>
-                                                                    <span className="font-semibold text-slate-900">{selectedInvoice.paymentTerms || 'Due on Receipt'}</span>
+                                                                <div className="flex justify-between items-baseline group">
+                                                                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Terms</span>
+                                                                    <span className="text-sm font-semibold text-slate-900">{selectedInvoice.paymentTerms || 'Due on Receipt'}</span>
                                                                 </div>
-                                                                <div className="flex justify-between border-b border-slate-100 pb-2">
-                                                                    <span className="text-slate-600 font-medium">Due Date</span>
-                                                                    <span className="font-semibold text-slate-900">{formatDate(selectedInvoice.dueDate)}</span>
+                                                                <div className="flex justify-between items-baseline group">
+                                                                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Due Date</span>
+                                                                    <span className="text-sm font-semibold text-slate-900">{formatDate(selectedInvoice.dueDate)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1194,50 +1332,57 @@ export default function Invoices() {
 
                                                     {/* Totals Section */}
                                                     <div className="flex justify-end mb-8">
-                                                        <div className="w-96 border border-slate-200 rounded-lg overflow-hidden">
-                                                            <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
-                                                                <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Summary</p>
-                                                            </div>
-                                                            <div className="p-4 space-y-3 text-sm">
-                                                                <div className="flex justify-between">
-                                                                    <span className="text-slate-600">Sub Total</span>
+                                                        <div className="w-80 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                                            <div className="p-4 space-y-2.5 text-sm">
+                                                                <div className="flex justify-between items-center text-slate-600">
+                                                                    <span className="font-medium">Sub Total</span>
                                                                     <span className="font-semibold text-slate-900">{formatCurrency(selectedInvoice.subTotal || selectedInvoice.total)}</span>
                                                                 </div>
                                                                 {selectedInvoice.cgst > 0 && (
-                                                                    <div className="flex justify-between">
-                                                                        <span className="text-slate-600">CGST</span>
+                                                                    <div className="flex justify-between items-center text-slate-600">
+                                                                        <span className="font-medium">CGST</span>
                                                                         <span className="font-semibold text-slate-900">{formatCurrency(selectedInvoice.cgst)}</span>
                                                                     </div>
                                                                 )}
                                                                 {selectedInvoice.sgst > 0 && (
-                                                                    <div className="flex justify-between">
-                                                                        <span className="text-slate-600">SGST</span>
+                                                                    <div className="flex justify-between items-center text-slate-600">
+                                                                        <span className="font-medium">SGST</span>
                                                                         <span className="font-semibold text-slate-900">{formatCurrency(selectedInvoice.sgst)}</span>
                                                                     </div>
                                                                 )}
-                                                                <div className="flex justify-between py-3 border-t-2 border-slate-300 text-base font-bold">
-                                                                    <span className="text-slate-900">Total</span>
-                                                                    <span className="text-slate-900">{formatCurrency(selectedInvoice.total)}</span>
+                                                                <div className="flex justify-between items-center py-2 border-t border-slate-100 text-slate-900 font-bold">
+                                                                    <span>Total</span>
+                                                                    <span>{formatCurrency(selectedInvoice.total)}</span>
                                                                 </div>
                                                                 {selectedInvoice.amountPaid > 0 && (
-                                                                    <div className="flex justify-between text-green-600">
-                                                                        <span className="font-medium">Payment Made</span>
-                                                                        <span className="font-semibold">(-) {formatCurrency(selectedInvoice.amountPaid)}</span>
+                                                                    <div className="flex justify-between items-center text-green-600 font-medium bg-green-50/30 px-2 py-1 rounded-md -mx-2">
+                                                                        <span className="text-[10px] uppercase tracking-wider font-bold">Payment Made</span>
+                                                                        <span className="font-bold">(-) {formatCurrency(selectedInvoice.amountPaid)}</span>
                                                                     </div>
                                                                 )}
-                                                                <div className="flex justify-between py-3 border-t-2 border-slate-300 text-lg font-bold">
-                                                                    <span className="text-slate-900">Balance Due</span>
-                                                                    <span className="text-slate-900">{formatCurrency(selectedInvoice.balanceDue)}</span>
+                                                                <div className="flex justify-between items-center pt-2.5 border-t-2 border-slate-900 text-slate-900">
+                                                                    <span className="text-[10px] uppercase tracking-[0.1em] font-black">Balance Due</span>
+                                                                    <span className="text-lg font-black tabular-nums">{formatCurrency(selectedInvoice.balanceDue)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    {/* Notes Section */}
-                                                    {selectedInvoice.customerNotes && (
-                                                        <div className="mt-8 pt-6 border-t-2 border-slate-200">
-                                                            <p className="text-xs text-slate-500 uppercase font-bold mb-3 tracking-wide">NOTES</p>
-                                                            <p className="text-sm text-slate-700 leading-relaxed">{selectedInvoice.customerNotes}</p>
+                                                    {/* Notes and Terms Section */}
+                                                    {(selectedInvoice.customerNotes || selectedInvoice.termsAndConditions) && (
+                                                        <div className="mt-12 pt-8 border-t border-slate-200 grid grid-cols-2 gap-12">
+                                                            {selectedInvoice.customerNotes && (
+                                                                <div>
+                                                                    <p className="text-xs text-slate-500 uppercase font-bold mb-3 tracking-wide">Customer Notes</p>
+                                                                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{selectedInvoice.customerNotes}</p>
+                                                                </div>
+                                                            )}
+                                                            {selectedInvoice.termsAndConditions && (
+                                                                <div>
+                                                                    <p className="text-xs text-slate-500 uppercase font-bold mb-3 tracking-wide">Terms & Conditions</p>
+                                                                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{selectedInvoice.termsAndConditions}</p>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
 

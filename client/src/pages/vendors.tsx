@@ -1203,13 +1203,13 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                       {currentOrg?.gstin && <p className="pt-1"><span className="font-semibold text-slate-800 dark:text-slate-200">GSTIN:</span> {currentOrg.gstin}</p>}
                     </div>
                   </div>
-                  
+
                   <div className="text-right flex flex-col justify-between items-end">
                     <div className="text-right mb-8">
                       <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Statement</h1>
                       <p className="text-blue-600 font-bold tracking-widest text-sm">01/12/2025 TO 31/12/2025</p>
                     </div>
-                    
+
                     <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400 max-w-xs">
                       <p className="font-bold text-slate-500 uppercase tracking-wider text-xs mb-2">Vendor Details</p>
                       <p className="font-black text-blue-600 text-xl leading-none mb-1">{vendor.displayName}</p>
@@ -1252,7 +1252,7 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                 <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-slate-900 dark:bg-slate-700 text-white">
+                      <tr className="bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-600">
                         <th className="py-4 px-6 text-left font-bold uppercase tracking-widest text-[10px]">Date</th>
                         <th className="py-4 px-6 text-left font-bold uppercase tracking-widest text-[10px]">Transaction Details</th>
                         <th className="py-4 px-6 text-center font-bold uppercase tracking-widest text-[10px]">Status</th>
@@ -1305,14 +1305,14 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                       )}
                     </tbody>
                     <tfoot>
-                      <tr className="bg-slate-900 dark:bg-slate-800 text-white font-black border-t-4 border-blue-600">
+                      <tr className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-black border-t-4 border-blue-600">
                         <td colSpan={5} className="py-5 px-6 text-right uppercase tracking-widest text-xs">Closing Balance Due</td>
                         <td className="py-5 px-6 text-right text-xl">{formatCurrency(balanceDue)}</td>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
-                
+
                 <div className="mt-10 pt-10 border-t border-slate-100 dark:border-slate-700 text-center">
                   <p className="text-xs text-slate-400 font-medium uppercase tracking-[0.2em]">Thank you for your business</p>
                 </div>
