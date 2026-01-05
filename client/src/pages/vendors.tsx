@@ -219,6 +219,8 @@ function VendorDetailPanel({
   onToggleStatus: () => void;
   onDelete: () => void;
 }) {
+  const { currentOrganization: currentOrg } = useOrganization();
+  const { data: branding } = useBranding();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
@@ -1164,13 +1166,14 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                 </div>
                 <div className="text-right text-sm">
                   <p className="font-medium">{currentOrg?.name}</p>
-                  <p>Hinjewadi - Wakad road</p>
-                  <p>Hinjewadi</p>
-                  <p>Pune Maharashtra 411057</p>
-                  <p>India</p>
-                  <p>GSTIN 27AZCPA5145K1ZH</p>
-                  <p>Sales.SkilltonIT@skilltonit.com</p>
-                  <p>www.skilltonit.com</p>
+                  {currentOrg?.street1 && <p>{currentOrg.street1}</p>}
+                  {currentOrg?.street2 && <p>{currentOrg.street2}</p>}
+                  <p>
+                    {[currentOrg?.city, currentOrg?.state, currentOrg?.postalCode].filter(Boolean).join(', ')}
+                  </p>
+                  {currentOrg?.gstin && <p>GSTIN {currentOrg.gstin}</p>}
+                  {currentOrg?.email && <p>{currentOrg.email}</p>}
+                  {currentOrg?.website && <p>{currentOrg.website}</p>}
                 </div>
               </div>
 

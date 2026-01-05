@@ -1666,19 +1666,11 @@ interface CustomerDetailPanelProps {
 }
 
 function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatus, onDelete }: CustomerDetailPanelProps) {
+  const { currentOrganization: currentOrg } = useOrganization();
+  const { data: branding } = useBranding();
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
-
-  const { data: branding } = useQuery<any>({
-    queryKey: ['/api/branding'],
-  });
-
-  const { data: organizations } = useQuery<any>({
-    queryKey: ['/api/organizations'],
-  });
-
-  const currentOrg = organizations?.data?.[0];
+  const [activeTab, setActiveTab] = useState("overview");
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -2420,14 +2412,14 @@ function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatu
                 </div>
                 <div className="text-right text-sm">
                   <p className="font-bold text-lg text-slate-900">{currentOrg?.name}</p>
-                  {currentOrg?.address?.street && <p className="text-slate-600">{currentOrg.address.street}</p>}
-                  {currentOrg?.address && (
-                    <p className="text-slate-600">
-                      {[currentOrg.address.city, currentOrg.address.state, currentOrg.address.postalCode].filter(Boolean).join(', ')}
-                    </p>
-                  )}
-                  {currentOrg?.gstNumber && <p className="text-slate-600">GSTIN: {currentOrg.gstNumber}</p>}
+                  {currentOrg?.street1 && <p className="text-slate-600">{currentOrg.street1}</p>}
+                  {currentOrg?.street2 && <p className="text-slate-600">{currentOrg.street2}</p>}
+                  <p className="text-slate-600">
+                    {[currentOrg?.city, currentOrg?.state, currentOrg?.postalCode].filter(Boolean).join(', ')}
+                  </p>
+                  {currentOrg?.gstin && <p className="text-slate-600">GSTIN: {currentOrg.gstin}</p>}
                   {currentOrg?.email && <p className="text-slate-600">{currentOrg.email}</p>}
+                  {currentOrg?.website && <p className="text-slate-600">{currentOrg.website}</p>}
                 </div>
               </div>
 
