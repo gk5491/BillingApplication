@@ -1800,6 +1800,45 @@ function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatu
     { key: 'creditNotes', label: 'Credit Notes', columns: ['DATE', 'CREDIT NOTE N...', 'AMOUNT', 'BALANCE', 'STATUS'] }
   ];
 
+  const [statementTransactions, setStatementTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    if (activeTab === "statement") {
+      fetchStatementTransactions();
+    }
+  }, [activeTab, customer.id]);
+
+  const fetchStatementTransactions = async () => {
+    try {
+      const response = await fetch(`/api/customers/${customer.id}/transactions`);
+      if (response.ok) {
+        const data = await response.json();
+        // Assuming transactions.invoices and transactions.customerPayments are the source
+        const allTx = [
+          ...(data.data.invoices || []).map((inv: any) => ({ ...inv, type: 'Invoice' })),
+          ...(data.data.customerPayments || []).map((pay: any) => ({ ...pay, type: 'Payment' }))
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setStatementTransactions(allTx);
+      }
+    } catch (error) {
+      console.error('Error fetching statement transactions:', error);
+    }
+  };
+
+  const invoicedAmount = statementTransactions
+    .filter(tx => tx.type === 'Invoice')
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const amountReceived = statementTransactions
+    .filter(tx => tx.type === 'Payment' || tx.status === 'PAID' || tx.status === 'PARTIALLY_PAID')
+    .reduce((sum, tx) => {
+      if (tx.type === 'Payment') return sum + tx.amount;
+      // For invoices, the amount received is (total amount - balance)
+      return sum + (tx.amount - (tx.balance || 0));
+    }, 0);
+
+  const balanceDue = invoicedAmount - amountReceived;
+
   return (
     <div className="h-full flex flex-col bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-700">
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
@@ -2450,15 +2489,15 @@ function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatu
                     </tr>
                     <tr>
                       <td className="py-1">Invoiced Amount</td>
-                      <td className="py-1 text-right">{formatCurrency(0)}</td>
+                      <td className="py-1 text-right">{formatCurrency(invoicedAmount)}</td>
                     </tr>
                     <tr>
                       <td className="py-1">Amount Received</td>
-                      <td className="py-1 text-right text-green-600">{formatCurrency(0)}</td>
+                      <td className="py-1 text-right text-green-600">{formatCurrency(amountReceived)}</td>
                     </tr>
                     <tr className="border-t font-medium">
                       <td className="py-2">Balance Due</td>
-                      <td className="py-2 text-right">{formatCurrency(0)}</td>
+                      <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -2476,19 +2515,27 @@ function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatu
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="py-2">01/12/2025</td>
-                    <td className="py-2">***Opening Balance***</td>
-                    <td className="py-2"></td>
-                    <td className="py-2 text-right">0.00</td>
-                    <td className="py-2 text-right"></td>
-                    <td className="py-2 text-right">0.00</td>
-                  </tr>
+                  {statementTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-4 text-center text-slate-500">No transactions for this period</td>
+                    </tr>
+                  ) : (
+                    statementTransactions.map((tx, idx) => (
+                      <tr key={tx.id || idx} className="border-b last:border-0">
+                        <td className="py-2">{formatDate(tx.date)}</td>
+                        <td className="py-2">{tx.type} {tx.number}</td>
+                        <td className="py-2">{tx.status}</td>
+                        <td className="py-2 text-right">{tx.type === 'Invoice' ? formatCurrency(tx.amount) : ''}</td>
+                        <td className="py-2 text-right">{tx.type === 'Payment' || (tx.amount - tx.balance > 0) ? formatCurrency(tx.type === 'Payment' ? tx.amount : (tx.amount - tx.balance)) : ''}</td>
+                        <td className="py-2 text-right">{formatCurrency(tx.balance || 0)}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
                 <tfoot>
                   <tr className="border-t font-medium">
                     <td colSpan={5} className="py-2 text-right">Balance Due</td>
-                    <td className="py-2 text-right">{formatCurrency(0)}</td>
+                    <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
                   </tr>
                 </tfoot>
               </table>

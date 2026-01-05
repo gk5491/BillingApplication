@@ -177,3 +177,4 @@
 [x] 169. All import items completed - application fully functional and ready for use
 [x] 170. Session restart - reinstalled cross-env and verified application running (Jan 05, 2026)
 [x] 171. Session restart - reinstalled cross-env and verified application running (Jan 05, 2026 - current session)
+[x] 172. Fixed Account Summary values and populated transaction table in Customer Statement tab (Jan 05, 2026)
