@@ -1,0 +1,53 @@
+Problem Description (Current Issue):
+The organisation logo uploaded from Settings → Organisation Logo is not being applied in generated documents, specifically:
+Customer Statement (Sales → Customers → Statement)
+Vendor Statement (Purchases → Vendors → Statement)
+Print / PDF preview
+Email-sent statements
+Instead of the configured logo, the statement UI shows “No Logo” or an empty placeholder, even though a logo is already uploaded and saved in settings.
+This indicates a broken data flow between organisation settings and statement rendering.
+Expected Behavior (What MUST Happen):
+The logo uploaded in Settings → Organisation → Logo should act as the single source of truth.
+That logo must automatically appear in:
+Customer Statement header
+Vendor Statement header
+PDF downloads
+Print previews
+Email attachments
+No manual logo upload should be required per statement.
+If the logo is updated in settings, all statements must reflect the new logo instantly.
+Functional Requirements:
+Fetch organisation logo dynamically from the settings table/config/API.
+Inject the logo into the statement header section (top-left or defined brand position).
+Ensure consistency across:
+On-screen UI
+Print view
+PDF export
+Email attachment
+If logo is missing:
+Show a clean fallback (organisation name text)
+DO NOT show “No Logo” placeholder in production UI.
+Technical Expectations (High-Level, No Code):
+Ensure the statement component/service reads logo data from organisation settings, not hardcoded or local state.
+Confirm logo URL/path is:
+Persisted correctly after upload
+Accessible publicly or via authorized fetch
+Verify logo binding exists in:
+Customer Statement template
+Vendor Statement template
+PDF generation template
+Avoid duplication:
+❌ Do not store logo separately for customers/vendors
+✅ Use organisation-level logo only
+Edge Cases to Handle:
+Logo updated → existing statements should reflect new logo
+Logo removed → fallback text appears gracefully
+PDF export matches preview exactly (no missing logo)
+Email-sent PDF includes logo
+Different screen sizes should not break logo alignment
+Acceptance Criteria (Very Important):
+Upload logo once in Settings → Organisation Logo
+Open any Customer or Vendor Statement
+Logo must be visible immediately without refresh hacks
+Downloaded PDF must match UI preview
+Same logo must appear everywhere, consistently
