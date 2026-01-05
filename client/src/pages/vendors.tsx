@@ -334,29 +334,29 @@ function VendorDetailPanel({
       // Company Header (Two columns)
       doc.setFontSize(11);
       doc.setFont(undefined, 'bold');
-      doc.text('SkilltonIT', 20, yPos);
+      doc.text(currentOrg?.name || 'SkilltonIT', 20, yPos);
 
       // Vendor info on right side
       const vendorInfoX = 120;
       doc.setFontSize(10);
       doc.setFont(undefined, 'normal');
-      doc.text('SkilltonIT', vendorInfoX, yPos);
+      doc.text(currentOrg?.name || 'SkilltonIT', vendorInfoX, yPos);
       yPos += 6;
 
       doc.setFontSize(9);
-      doc.text('Hinjewadi - Wakad road', vendorInfoX, yPos);
+      doc.text(currentOrg?.street1 || 'Hinjewadi - Wakad road', vendorInfoX, yPos);
       yPos += 5;
-      doc.text('Hinjewadi', vendorInfoX, yPos);
+      doc.text(currentOrg?.street2 || 'Hinjewadi', vendorInfoX, yPos);
       yPos += 5;
-      doc.text('Pune Maharashtra 411057', vendorInfoX, yPos);
+      doc.text(`${currentOrg?.city || 'Pune'} ${currentOrg?.state || 'Maharashtra'} ${currentOrg?.postalCode || '411057'}`, vendorInfoX, yPos);
       yPos += 5;
-      doc.text('India', vendorInfoX, yPos);
+      doc.text(currentOrg?.location || 'India', vendorInfoX, yPos);
       yPos += 5;
-      doc.text('GSTIN 27AZCPA5145K1ZH', vendorInfoX, yPos);
+      doc.text(`GSTIN ${currentOrg?.gstin || '27AZCPA5145K1ZH'}`, vendorInfoX, yPos);
       yPos += 5;
-      doc.text('Sales.SkilltonIT@skilltonit.com', vendorInfoX, yPos);
+      doc.text(currentOrg?.email || 'Sales.SkilltonIT@skilltonit.com', vendorInfoX, yPos);
       yPos += 5;
-      doc.text('www.skilltonit.com', vendorInfoX, yPos);
+      doc.text(currentOrg?.website || 'www.skilltonit.com', vendorInfoX, yPos);
       yPos += 10;
 
       // "To:" Section
@@ -408,9 +408,9 @@ function VendorDetailPanel({
 
       const summaryRows = [
         ['Opening Balance', formatCurrency(vendor.openingBalance || 0)],
-        ['Billed Amount', formatCurrency(0)],
-        ['Amount Paid', formatCurrency(0)],
-        ['Balance Due', formatCurrency(vendor.payables || 0)]
+        ['Billed Amount', formatCurrency(billedAmount)],
+        ['Amount Paid', formatCurrency(amountPaid)],
+        ['Balance Due', formatCurrency(balanceDue)]
       ];
 
       const leftCol = 30;
@@ -546,6 +546,44 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
     { key: 'vendorCredits', label: 'Vendor Credits', columns: ['DATE', 'CREDIT NO...', 'ORDER NU...', 'BALANCE', 'AMOUNT', 'STATUS'] },
     { key: 'journals', label: 'Journals', columns: ['DATE', 'JOURNAL NU...', 'REFERENCE NU...', 'DEBIT', 'CREDIT'] }
   ];
+
+  const [statementTransactions, setStatementTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    if (activeTab === "statement") {
+      fetchStatementTransactions();
+    }
+  }, [activeTab, vendor.id]);
+
+  const fetchStatementTransactions = async () => {
+    try {
+      const response = await fetch(`/api/vendors/${vendor.id}/transactions`);
+      if (response.ok) {
+        const data = await response.json();
+        const allTx = [
+          ...(data.data.bills || []).map((bill: any) => ({ ...bill, type: 'Bill' })),
+          ...(data.data.billPayments || []).map((pay: any) => ({ ...pay, type: 'Payment' })),
+          ...(data.data.expenses || []).map((exp: any) => ({ ...exp, type: 'Expense' }))
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setStatementTransactions(allTx);
+      }
+    } catch (error) {
+      console.error('Error fetching statement transactions:', error);
+    }
+  };
+
+  const billedAmount = statementTransactions
+    .filter(tx => tx.type === 'Bill' || tx.type === 'Expense')
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const amountPaid = statementTransactions
+    .filter(tx => tx.type === 'Payment' || tx.status === 'PAID')
+    .reduce((sum, tx) => {
+      if (tx.type === 'Payment') return sum + tx.amount;
+      return sum + (tx.amount - (tx.balance || 0));
+    }, 0);
+
+  const balanceDue = (vendor.openingBalance || 0) + billedAmount - amountPaid;
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-700">
@@ -1205,15 +1243,15 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                     </tr>
                     <tr>
                       <td className="py-1">Billed Amount</td>
-                      <td className="py-1 text-right">{formatCurrency(0)}</td>
+                      <td className="py-1 text-right">{formatCurrency(billedAmount)}</td>
                     </tr>
                     <tr>
                       <td className="py-1">Amount Paid</td>
-                      <td className="py-1 text-right text-green-600">{formatCurrency(0)}</td>
+                      <td className="py-1 text-right text-green-600">{formatCurrency(amountPaid)}</td>
                     </tr>
                     <tr className="border-t font-medium">
                       <td className="py-2">Balance Due</td>
-                      <td className="py-2 text-right">{formatCurrency(vendor.payables || 0)}</td>
+                      <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1231,19 +1269,27 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="py-2">01/12/2025</td>
-                    <td className="py-2">***Opening Balance***</td>
-                    <td className="py-2"></td>
-                    <td className="py-2 text-right">{(vendor.openingBalance || 0).toFixed(2)}</td>
-                    <td className="py-2 text-right"></td>
-                    <td className="py-2 text-right">{(vendor.openingBalance || 0).toFixed(2)}</td>
-                  </tr>
+                  {statementTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-4 text-center text-slate-500">No transactions for this period</td>
+                    </tr>
+                  ) : (
+                    statementTransactions.map((tx, idx) => (
+                      <tr key={tx.id || idx} className="border-b last:border-0">
+                        <td className="py-2">{formatDate(tx.date)}</td>
+                        <td className="py-2">{tx.type} {tx.number}</td>
+                        <td className="py-2">{tx.status}</td>
+                        <td className="py-2 text-right">{tx.type === 'Bill' || tx.type === 'Expense' ? formatCurrency(tx.amount) : ''}</td>
+                        <td className="py-2 text-right">{tx.type === 'Payment' || (tx.amount - tx.balance > 0) ? formatCurrency(tx.type === 'Payment' ? tx.amount : (tx.amount - tx.balance)) : ''}</td>
+                        <td className="py-2 text-right">{formatCurrency(tx.balance || 0)}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
                 <tfoot>
                   <tr className="border-t font-medium">
                     <td colSpan={5} className="py-2 text-right">Balance Due</td>
-                    <td className="py-2 text-right">{formatCurrency(vendor.payables || 0)}</td>
+                    <td className="py-2 text-right">{formatCurrency(balanceDue)}</td>
                   </tr>
                 </tfoot>
               </table>

@@ -178,3 +178,4 @@
 [x] 170. Session restart - reinstalled cross-env and verified application running (Jan 05, 2026)
 [x] 171. Session restart - reinstalled cross-env and verified application running (Jan 05, 2026 - current session)
 [x] 172. Fixed Account Summary values and populated transaction table in Customer Statement tab (Jan 05, 2026)
+[x] 173. Fixed Account Summary values and populated transaction table in Vendor Statement tab (Jan 05, 2026)
