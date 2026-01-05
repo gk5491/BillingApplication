@@ -1454,6 +1454,8 @@
 // }
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useOrganization } from "@/context/OrganizationContext";
+import { useBranding } from "@/hooks/use-branding";
 import {
   Plus,
   Search,
@@ -2410,12 +2412,10 @@ function CustomerDetailPanel({ customer, onClose, onEdit, onClone, onToggleStatu
             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm p-8 max-w-4xl mx-auto">
               <div className="flex justify-between mb-8">
                 <div className="flex items-center">
-                  {branding?.logo ? (
-                    <img src={branding.logo} alt="Organization Logo" className="h-16 w-auto" />
+                  {branding?.logo?.url ? (
+                    <img src={branding.logo.url} alt="Organization Logo" className="h-16 w-auto object-contain" />
                   ) : (
-                    <div className="h-16 w-48 bg-slate-100 rounded flex items-center justify-center border-2 border-dashed border-slate-300">
-                      <span className="text-slate-400 text-xs">No Logo</span>
-                    </div>
+                    <h4 className="text-xl font-bold text-blue-600">{currentOrg?.name || 'Organization'}</h4>
                   )}
                 </div>
                 <div className="text-right text-sm">

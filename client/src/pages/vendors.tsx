@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { useOrganization } from "@/context/OrganizationContext";
+import { useBranding } from "@/hooks/use-branding";
 import {
   Plus, Search, ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2,
   X, Copy, Ban, FileText, ArrowUpDown, Download, Upload,
@@ -1154,10 +1156,14 @@ Generated on ${new Date().toLocaleDateString('en-IN')}`;
             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm p-8 max-w-4xl mx-auto">
               <div className="flex justify-between mb-8">
                 <div>
-                  <h4 className="text-xl font-bold text-blue-600">SkilltonIT</h4>
+                  {branding?.logo?.url ? (
+                    <img src={branding.logo.url} alt="Organization Logo" className="h-16 w-auto object-contain" />
+                  ) : (
+                    <h4 className="text-xl font-bold text-blue-600">{currentOrg?.name || 'Organization'}</h4>
+                  )}
                 </div>
                 <div className="text-right text-sm">
-                  <p className="font-medium">SkilltonIT</p>
+                  <p className="font-medium">{currentOrg?.name}</p>
                   <p>Hinjewadi - Wakad road</p>
                   <p>Hinjewadi</p>
                   <p>Pune Maharashtra 411057</p>
